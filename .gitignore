@@ -1,0 +1,15 @@
+# Claude Code / strumenti locali
+.claude/
+.playwright-cli/
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Editor
+.vscode/
+.idea/
+
+# Artefatti temporanei
+*.log
+*.tmp

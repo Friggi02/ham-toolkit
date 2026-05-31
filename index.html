@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Radio Spectrum Explorer</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header id="topbar">
+    <div class="brand">
+      <span class="logo">📡</span>
+      <div>
+        <h1>Radio Spectrum Explorer</h1>
+        <p id="subtitle">Spettro elettromagnetico esplorabile · scala logaritmica</p>
+      </div>
+    </div>
+    <div class="hint">
+      <span><kbd>rotella</kbd> scorri ↕</span>
+      <span><kbd>⌃+rotella</kbd> zoom</span>
+      <span><kbd>⇧+rotella</kbd> scorri ↔</span>
+      <span><kbd>click</kbd> dettagli</span>
+      <button id="resetBtn" title="Torna alla vista completa">⤢ Reset</button>
+    </div>
+  </header>
+
+  <main id="stage">
+    <canvas id="spectrum"></canvas>
+
+    <aside id="panel" class="panel hidden">
+      <button id="panelClose" class="panel-close" aria-label="Chiudi">×</button>
+      <div id="panelBody"></div>
+    </aside>
+
+    <div id="loadError" class="load-error hidden">
+      <h2>Impossibile caricare <code>bands.json</code></h2>
+      <p>Apri il sito tramite un server locale (i browser bloccano <code>fetch</code> dei file via <code>file://</code>).</p>
+      <pre>cd "questa cartella"
+python -m http.server 8000
+# poi apri http://localhost:8000</pre>
+    </div>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
