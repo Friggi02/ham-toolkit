@@ -40,6 +40,9 @@ let layout = { groups: [], laneH: 40, totalLanes: 0, contentBottom: 0, maxScroll
 let scrollY = 0;                  // scorrimento verticale del contenuto
 let sbDrag = null;                // trascinamento di una scrollbar: {axis:'h'|'v', off}
 let hoverSB = null;               // scrollbar sotto il cursore: 'h' | 'v' | null
+let focusMark = null;             // marker su una frequenza puntuale (log10 Hz)
+let searchMatches = [];           // risultati correnti della ricerca
+let searchActive = -1;            // indice evidenziato nei risultati
 
 let axisMin = 0, axisMax = 24;    // log10(Hz)
 let view = { min: 0, max: 24 };   // log10(Hz) attualmente visibile
@@ -154,12 +157,6 @@ async function loadData() {
   }
 
   computeLanes();
-
-  if (config.meta) {
-    document.getElementById('subtitle').textContent = config.meta.description
-      ? config.meta.description.split('.')[0]
-      : document.getElementById('subtitle').textContent;
-  }
 }
 
 // ================= Rendering =================
@@ -235,7 +232,32 @@ function draw() {
   ctx.restore();
 
   drawScrollbars();
+  drawFocusMark();
   drawCursor();
+}
+
+function drawFocusMark() {
+  if (focusMark == null) return;
+  const x = logToX(focusMark);
+  if (x < PAD.left - 1 || x > W - PAD.right + 1) return;
+  const hz = Math.pow(10, focusMark);
+
+  ctx.strokeStyle = 'rgba(240,160,48,.95)';
+  ctx.lineWidth = 1.5;
+  ctx.setLineDash([6, 3]);
+  line(x + 0.5, PAD.top, x + 0.5, H - PAD.bottom);
+  ctx.setLineDash([]);
+
+  const txt = '◎ ' + fmtHz(hz) + '  ·  ' + fmtLen(freqToLen(hz));
+  ctx.font = '600 11px "Segoe UI", system-ui, sans-serif';
+  const tw = ctx.measureText(txt).width;
+  const bx = Math.min(Math.max(x - tw / 2 - 8, PAD.left), W - PAD.right - tw - 16);
+  const by = PAD.top + 32;
+  ctx.fillStyle = 'rgba(240,160,48,.96)';
+  roundRect(bx, by, tw + 16, 22, 6); ctx.fill();
+  ctx.fillStyle = '#1a1205';
+  ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+  ctx.fillText(txt, bx + 8, by + 11);
 }
 
 // geometria della scrollbar verticale (null se non serve scorrere)
@@ -816,6 +838,97 @@ function resize() {
   draw();
 }
 
+// ================= Ricerca, frequenza e lunghezza d'onda =================
+
+const FREQ_UNITS = {
+  '': 1, 'hz': 1, 'k': 1e3, 'khz': 1e3, 'm': 1e6, 'mhz': 1e6, 'g': 1e9, 'ghz': 1e9,
+  't': 1e12, 'thz': 1e12, 'p': 1e15, 'phz': 1e15, 'e': 1e18, 'ehz': 1e18,
+  'z': 1e21, 'zhz': 1e21, 'y': 1e24, 'yhz': 1e24,
+};
+const LEN_IN_UNITS = {
+  '': 1, 'm': 1, 'km': 1e3, 'dm': 0.1, 'cm': 0.01, 'mm': 1e-3,
+  'um': 1e-6, 'nm': 1e-9, 'pm': 1e-12, 'fm': 1e-15, 'mm2': 1e-3,
+};
+
+function parseUnitValue(str, table) {
+  if (!str) return null;
+  const s = str.trim().toLowerCase().replace('µ', 'u').replace(',', '.').replace(/\s+/g, '');
+  const m = s.match(/^([0-9]*\.?[0-9]+)([a-z]*)$/);
+  if (!m) return null;
+  const num = parseFloat(m[1]);
+  if (!isFinite(num)) return null;
+  if (!(m[2] in table)) return null;
+  return num * table[m[2]];
+}
+
+const parseFrequency = (str) => parseUnitValue(str, FREQ_UNITS);          // → Hz
+const parseWavelength = (str) => parseUnitValue(str, LEN_IN_UNITS);        // → metri
+
+// Centra la vista su una frequenza puntuale e ci mette un marker
+function focusFrequency(hz) {
+  if (!(hz > 0)) return false;
+  let logF = Math.max(axisMin, Math.min(axisMax, log10(hz)));
+  focusMark = logF;
+  const cur = view.max - view.min;
+  const full = axisMax - axisMin;
+  const span = cur > full * 0.85 ? Math.min(4, full) : cur;  // se molto fuori, avvicina a ~4 decadi
+  animateView(logF - span / 2, logF + span / 2);
+  return true;
+}
+
+// --- Ricerca per nome (e id/note/autorità come fallback) ---
+function runSearch(q) {
+  const box = document.getElementById('searchResults');
+  q = q.trim().toLowerCase();
+  if (q.length < 2) { box.classList.add('hidden'); box.innerHTML = ''; searchMatches = []; searchActive = -1; return; }
+  const norm = (s) => (s || '').toLowerCase();
+  const scored = [];
+  for (const b of bands) {
+    const nm = norm(b.name);
+    let score = -1;
+    if (nm.startsWith(q)) score = 0;
+    else if (nm.includes(q)) score = 1;
+    else if (norm(b.id).includes(q) || norm(b.notes).includes(q) || norm(b.source && b.source.authority).includes(q)) score = 2;
+    if (score >= 0) scored.push({ b, score });
+  }
+  scored.sort((a, b) => a.score - b.score || a.b.from - b.b.from);
+  searchMatches = scored.slice(0, 40).map((s) => s.b);
+  searchActive = searchMatches.length ? 0 : -1;
+  renderResults();
+}
+
+const SCOPE_SHORT = { world: 'Mondo', europe: 'Europa', italy: 'Italia', physics: 'Fisica' };
+
+function renderResults() {
+  const box = document.getElementById('searchResults');
+  if (!searchMatches.length) {
+    box.innerHTML = '<div class="empty">Nessuna banda trovata</div>';
+    box.classList.remove('hidden');
+    return;
+  }
+  box.innerHTML = searchMatches.map((b, i) => {
+    const cat = categories[b.category];
+    const bits = [SCOPE_SHORT[b.scope] || b.scope, cat ? cat.label : b.category];
+    if (b.mode) bits.push(modeLabel(b.mode));
+    return `<div class="res${i === searchActive ? ' active' : ''}" data-i="${i}">
+      <span class="dot" style="background:${bandColor(b)}"></span>
+      <span class="txt"><div class="nm">${b.name}</div><div class="sub">${bits.join(' · ')}</div></span>
+      <span class="rng">${fmtHz(b.from)}–${fmtHz(b.to)}</span>
+    </div>`;
+  }).join('');
+  box.classList.remove('hidden');
+  box.querySelectorAll('.res').forEach((el) => {
+    el.addEventListener('mousedown', (e) => { e.preventDefault(); chooseResult(+el.dataset.i); });
+  });
+}
+
+function chooseResult(i) {
+  const b = searchMatches[i];
+  if (!b) return;
+  document.getElementById('searchResults').classList.add('hidden');
+  selectBand(b);
+}
+
 async function init() {
   canvas = document.getElementById('spectrum');
   ctx = canvas.getContext('2d');
@@ -835,9 +948,61 @@ async function init() {
   window.addEventListener('mousemove', onMouseMove);
   window.addEventListener('mouseup', onMouseUp);
   canvas.addEventListener('mouseleave', onMouseLeave);
-  document.getElementById('resetBtn').addEventListener('click', () => animateView(axisMin, axisMax));
+  document.getElementById('resetBtn').addEventListener('click', () => { focusMark = null; animateView(axisMin, axisMax); });
   document.getElementById('panelClose').addEventListener('click', closePanel);
   window.addEventListener('keydown', (e) => { if (e.key === 'Escape') closePanel(); });
+
+  setupControls();
+}
+
+function setupControls() {
+  const search = document.getElementById('searchInput');
+  const results = document.getElementById('searchResults');
+  const freq = document.getElementById('freqInput');
+  const wave = document.getElementById('waveInput');
+
+  // --- ricerca ---
+  search.addEventListener('input', () => runSearch(search.value));
+  search.addEventListener('focus', () => { if (search.value.trim().length >= 2) runSearch(search.value); });
+  search.addEventListener('keydown', (e) => {
+    if (!searchMatches.length) return;
+    if (e.key === 'ArrowDown') { e.preventDefault(); searchActive = (searchActive + 1) % searchMatches.length; renderResults(); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); searchActive = (searchActive - 1 + searchMatches.length) % searchMatches.length; renderResults(); }
+    else if (e.key === 'Enter') { e.preventDefault(); chooseResult(searchActive < 0 ? 0 : searchActive); }
+    else if (e.key === 'Escape') { e.stopPropagation(); results.classList.add('hidden'); }
+  });
+  document.addEventListener('mousedown', (e) => {
+    if (!e.target.closest('.search')) results.classList.add('hidden');
+  });
+
+  // --- frequenza ↔ lunghezza d'onda (sincronizzati) ---
+  const mark = (el, ok) => el.classList.toggle('bad', !ok);
+
+  freq.addEventListener('input', () => {
+    const hz = parseFrequency(freq.value);
+    if (freq.value.trim() === '') { freq.classList.remove('bad'); return; }
+    mark(freq, hz != null);
+    if (hz != null) wave.value = fmtLen(freqToLen(hz));
+  });
+  wave.addEventListener('input', () => {
+    const m = parseWavelength(wave.value);
+    if (wave.value.trim() === '') { wave.classList.remove('bad'); return; }
+    mark(wave, m != null && m > 0);
+    if (m != null && m > 0) freq.value = fmtHz(freqToLen(m)); // λ→f simmetrico (c/λ)
+  });
+  freq.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter') return;
+    const hz = parseFrequency(freq.value);
+    if (hz != null && focusFrequency(hz)) { wave.value = fmtLen(freqToLen(hz)); freq.classList.remove('bad'); }
+    else mark(freq, false);
+  });
+  wave.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter') return;
+    const m = parseWavelength(wave.value);
+    const hz = m != null && m > 0 ? freqToLen(m) : null;   // f = c/λ
+    if (hz != null && focusFrequency(hz)) { freq.value = fmtHz(hz); wave.classList.remove('bad'); }
+    else mark(wave, false);
+  });
 }
 
 init();

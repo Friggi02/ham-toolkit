@@ -4,22 +4,38 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Radio Spectrum Explorer</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <header id="topbar">
     <div class="brand">
       <span class="logo">📡</span>
-      <div>
-        <h1>Radio Spectrum Explorer</h1>
-        <p id="subtitle">Spettro elettromagnetico esplorabile · scala logaritmica</p>
+      <h1>Radio Spectrum Explorer</h1>
+    </div>
+    <div class="controls">
+      <div class="search">
+        <svg class="search-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <circle cx="10.5" cy="10.5" r="7"></circle><line x1="20" y1="20" x2="15.5" y2="15.5"></line>
+        </svg>
+        <input id="searchInput" type="text" placeholder="Cerca banda…" autocomplete="off" spellcheck="false" />
+        <div id="searchResults" class="results hidden"></div>
       </div>
+      <input id="freqInput" class="num" type="text" placeholder="Frequenza · es. 7 MHz" title="Inserisci una frequenza e premi Invio per centrare la vista" autocomplete="off" spellcheck="false" />
+      <input id="waveInput" class="num" type="text" placeholder="λ · es. 40 m" title="Inserisci una lunghezza d'onda e premi Invio per centrare la vista" autocomplete="off" spellcheck="false" />
     </div>
     <div class="hint">
-      <span><kbd>rotella</kbd> scorri ↕</span>
-      <span><kbd>⌃+rotella</kbd> zoom</span>
-      <span><kbd>⇧+rotella</kbd> scorri ↔</span>
-      <span><kbd>click</kbd> dettagli</span>
+      <div class="commands">
+        <button class="cmd-btn" type="button">⌨ Comandi ▾</button>
+        <div class="cmd-menu">
+          <div class="cmd"><kbd>rotella</kbd><span>scorri verticale</span></div>
+          <div class="cmd"><kbd>Ctrl + rotella</kbd><span>zoom (sul cursore)</span></div>
+          <div class="cmd"><kbd>Shift + rotella</kbd><span>scorri frequenze</span></div>
+          <div class="cmd"><kbd>scroll ↔</kbd><span>scorri frequenze</span></div>
+          <div class="cmd"><kbd>trascina barre</kbd><span>scorri ↕ / ↔</span></div>
+          <div class="cmd"><kbd>click banda</kbd><span>dettagli e fonte</span></div>
+        </div>
+      </div>
       <button id="resetBtn" title="Torna alla vista completa">⤢ Reset</button>
     </div>
   </header>
