@@ -791,6 +791,7 @@ function renderPanel(b) {
       <dt>λ (a)</dt><dd>${fmtLen(freqToLen(b.to))}</dd>
     </dl>
     ${b.notes ? `<p class="notes">${b.notes}</p>` : ''}
+    ${window.SDR ? SDR.renderBlock(b) : ''}
     <div class="source">
       <span class="lbl">Fonte <span class="tier ${tier}">${tier === 'primary' ? 'primaria' : 'secondaria'}</span></span>
       ${src.url ? `<a href="${src.url}" target="_blank" rel="noopener">${src.title || src.url}</a>` : '<em>Non specificata</em>'}
