@@ -226,8 +226,8 @@ kbd {
   position: absolute;
   top: 0;
   right: 0;
-  width: 360px;
-  max-width: 88vw;
+  width: 440px;
+  max-width: 92vw;
   height: 100%;
   background: var(--panel-bg);
   border-left: 1px solid var(--border);
@@ -427,3 +427,37 @@ kbd {
   transition: color .15s, background .15s;
 }
 .brand .home:hover { color: var(--accent); background: var(--bg-soft); }
+
+/* ---- Innesto: blocco "Ascolto con RTL-SDR + SDR++" ---- */
+.panel .sdr {
+  margin-top: 18px;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: linear-gradient(180deg, rgba(45,212,191,.05), transparent);
+}
+.panel .sdr-head {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent);
+  margin-bottom: 12px;
+}
+.panel .sdr-cols { display: grid; grid-template-columns: 1fr; gap: 16px; }
+.panel .sdr-gtitle { font-size: 12px; color: var(--text-dim); margin-bottom: 8px; }
+.panel .sdr-dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 7px 10px; font-size: 12.5px; }
+.panel .sdr-dl dt { color: var(--text-faint); white-space: nowrap; }
+.panel .sdr-dl dd { margin: 0; color: var(--text); text-align: right; min-width: 0; overflow-wrap: anywhere; }
+.panel .sdr-dl dd b { color: var(--accent); }
+.panel .sdr-note {
+  margin-top: 12px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border-left: 3px solid var(--grid-strong);
+  background: var(--bg-soft);
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-dim);
+}
+.panel .sdr-note.warn { border-left-color: #f0a030; }
+.panel .sdr-note.danger { border-left-color: #e0524d; }
+.panel .sdr-note.info { border-left-color: var(--accent); }

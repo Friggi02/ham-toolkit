@@ -7,7 +7,7 @@ const CACHE = `ham-toolkit-${VERSION}`;
 const FILES = [
   './', 'manifest.webmanifest', 'pwa.js',
   'icons/icon.svg', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-maskable-512.png', 'icons/apple-touch-icon.png',
-  'spettro/', 'spettro/style.css', 'spettro/app.js', 'spettro/bands.json', 'spettro/favicon.svg',
+  'spettro/', 'spettro/style.css', 'spettro/sdr.js', 'spettro/app.js', 'spettro/bands.json', 'spettro/favicon.svg',
   'codici-q/', 'dipolo/', 'ruota/',
 ];
 
