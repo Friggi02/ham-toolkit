@@ -1,7 +1,8 @@
 /* Radio Spectrum Explorer
- * Scala logaritmica (log10 Hz), zoom su rotella, pan su drag, doppio righello
- * (Hz in alto, lunghezza d'onda in basso), bande disposte in righe per profondità,
- * comparsa automatica per larghezza (LOD), pannello laterale al click.
+ * Scala logaritmica (log10 Hz), zoom su rotella / pizzico, pan su trascinamento
+ * (mouse e touch), doppio righello (Hz in alto, lunghezza d'onda in basso),
+ * bande impacchettate in corsie per ente, comparsa automatica per larghezza (LOD),
+ * frequenze singole come marcatori, filtri per ente/categoria, vista nell'URL.
  */
 'use strict';
 
@@ -17,6 +18,10 @@ const GROUP_HEADER = 16;       // striscia col titolo del gruppo/ente
 const GROUP_GAP = 12;          // spazio tra gruppi
 const LANE_MIN = 30, LANE_MAX = 58;   // se non entra tutto, si scorre verticalmente
 const SCROLLBAR_W = 5;   // spessore (uguale per barra verticale e orizzontale)
+const LINEAR_TICKS_SPAN = 0.5;  // sotto questo span (decadi) il righello passa a tacche lineari
+const MARK_ROW = 20;            // riga dei marcatori (frequenze singole) in cima al gruppo
+const MARKER_PARENT_PX = 24;    // il marcatore compare quando la banda madre è larga almeno così
+const MARKER_NOPARENT_SPAN = 0.05; // senza banda madre: compare sotto questo span (decadi)
 
 // Gruppi (enti) impilati dall'alto, con tinta di sfondo
 const SCOPE_ORDER = ['physics', 'world', 'europe', 'italy'];
@@ -32,8 +37,14 @@ const SCOPE_META = {
 let DPR = Math.max(1, window.devicePixelRatio || 1);
 let canvas, ctx, W = 0, H = 0;
 let config = null;
-let bands = [];
-let bandById = new Map();
+let allRanges = [];               // tutte le bande (intervalli)
+let allMarkers = [];              // tutte le frequenze singole (voci con `freq`)
+let bands = [];                   // bande visibili dopo i filtri
+let markers = [];                 // marcatori visibili dopo i filtri
+let bandById = new Map();         // bande e marcatori, per id
+let hiddenScopes = new Set();     // enti nascosti dai filtri
+let hiddenCats = new Set();       // categorie nascoste dai filtri
+let showMarkers = true;
 let categories = {};
 let maxDepth = 0;
 let layout = { groups: [], laneH: 40, totalLanes: 0, contentBottom: 0, maxScroll: 0 };
@@ -78,18 +89,34 @@ const LEN_UNITS = [
   [1e12,'Tm'],[1e9,'Gm'],[1e6,'Mm'],[1e3,'km'],[1,'m'],
   [1e-2,'cm'],[1e-3,'mm'],[1e-6,'µm'],[1e-9,'nm'],[1e-12,'pm'],[1e-15,'fm']
 ];
-function fmtLen(m) {
+function fmtLen(m, sig) {
   if (!isFinite(m) || m <= 0) return '∞';
+  const num = (n) => sig ? String(+n.toPrecision(sig)) : trimNum(n);
   for (const [f, u] of LEN_UNITS) {
-    if (m >= f) return trimNum(m / f) + ' ' + u;
+    if (m >= f) return num(m / f) + ' ' + u;
   }
-  return trimNum(m / 1e-15) + ' fm';
+  return num(m / 1e-15) + ' fm';
 }
 
 function trimNum(n) {
   if (n >= 100) return n.toFixed(0);
   if (n >= 10)  return n.toFixed(1).replace(/\.0$/, '');
   return n.toFixed(2).replace(/\.?0+$/, '');
+}
+
+// Frequenza con `sig` cifre significative (per valori esatti: bande, marcatori, cursore)
+function fmtHzP(hz, sig = 10) {
+  if (hz <= 0) return 'DC';
+  for (const [f, u] of HZ_UNITS) {
+    if (hz >= f) return String(+(hz / f).toPrecision(sig)) + ' ' + u;
+  }
+  return String(+hz.toPrecision(sig)) + ' Hz';
+}
+
+// Cifre significative sensate per il cursore: quanto vale un pixel alla zoom attuale
+function cursorDigits(hz) {
+  const hzPerPx = hz * Math.LN10 * (view.max - view.min) / bandAreaW();
+  return Math.max(3, Math.min(10, Math.ceil(log10(hz / hzPerPx))));
 }
 
 const freqToLen = (hz) => C_LIGHT / hz;
@@ -140,15 +167,16 @@ async function loadData() {
   }
   view.min = axisMin; view.max = axisMax;
 
-  bands = (config.bands || []).map((b) => ({
-    ...b,
-    logFrom: log10(b.from),
-    logTo: log10(b.to),
-  }));
-  bandById = new Map(bands.map((b) => [b.id, b]));
+  // le voci con `freq` sono frequenze singole (marcatori), le altre intervalli from–to
+  const all = (config.bands || []).map((b) => {
+    const point = b.freq != null;
+    const from = point ? b.freq : b.from, to = point ? b.freq : b.to;
+    return { ...b, from, to, point, logFrom: log10(from), logTo: log10(to) };
+  });
+  bandById = new Map(all.map((b) => [b.id, b]));
 
   // profondità da catena parent
-  for (const b of bands) {
+  for (const b of all) {
     let d = 0, p = b.parent;
     const seen = new Set();
     while (p && bandById.has(p) && !seen.has(p)) { seen.add(p); d++; p = bandById.get(p).parent; }
@@ -156,6 +184,21 @@ async function loadData() {
     if (d > maxDepth) maxDepth = d;
   }
 
+  allRanges = all.filter((b) => !b.point);
+  allMarkers = all.filter((b) => b.point);
+  applyFilters();
+}
+
+// ================= Filtri =================
+
+const scopeKey = (b) => SCOPE_ORDER.includes(b.scope || 'world') ? (b.scope || 'world') : 'other';
+const isShown = (b) => !hiddenScopes.has(scopeKey(b)) && !hiddenCats.has(b.category) && (!b.point || showMarkers);
+
+function applyFilters() {
+  bands = allRanges.filter(isShown);
+  markers = allMarkers.filter(isShown);
+  if (hovered && !isShown(hovered)) hovered = null;
+  if (selected && !isShown(selected)) closePanel();
   computeLanes();
 }
 
@@ -181,12 +224,12 @@ function packGroup(arr) {
 function computeLanes() {
   const groups = [];
   const known = new Set(SCOPE_ORDER);
-  for (const sc of SCOPE_ORDER) {
-    const items = bands.filter((b) => (b.scope || 'world') === sc);
-    if (items.length) groups.push({ scope: sc, items, lanes: packGroup(items) });
+  for (const sc of [...SCOPE_ORDER, 'other']) {
+    const inScope = (b) => sc === 'other' ? !known.has(b.scope || 'world') : (b.scope || 'world') === sc;
+    const items = bands.filter(inScope);
+    const marks = markers.filter(inScope).sort((a, b) => a.logFrom - b.logFrom);
+    if (items.length || marks.length) groups.push({ scope: sc, items, markers: marks, lanes: packGroup(items) });
   }
-  const rest = bands.filter((b) => !known.has(b.scope || 'world'));
-  if (rest.length) groups.push({ scope: 'other', items: rest, lanes: packGroup(rest) });
 
   layout.groups = groups;
   layout.totalLanes = groups.reduce((s, g) => s + g.lanes, 0);
@@ -205,9 +248,12 @@ function computeGeometry() {
   for (const g of layout.groups) {
     g.headerY = y;
     y += GROUP_HEADER;
+    g.markY = y;                       // riga dei marcatori (solo se il gruppo ne ha)
+    if (g.markers.length) y += MARK_ROW;
     g.laneY = y;
     g.height = g.lanes * laneH;
     for (const b of g.items) b.y0 = g.laneY + b.lane * laneH;
+    for (const m of g.markers) m.y0 = g.markY;
     y += g.height + GROUP_GAP;
   }
   layout.contentBottom = y;
@@ -229,11 +275,13 @@ function draw() {
   ctx.translate(0, -scrollY);
   drawGroups();
   drawBands();
+  drawMarkers();
   ctx.restore();
 
   drawScrollbars();
   drawFocusMark();
   drawCursor();
+  scheduleHash();
 }
 
 function drawFocusMark() {
@@ -248,7 +296,7 @@ function drawFocusMark() {
   line(x + 0.5, PAD.top, x + 0.5, H - PAD.bottom);
   ctx.setLineDash([]);
 
-  const txt = '◎ ' + fmtHz(hz) + '  ·  ' + fmtLen(freqToLen(hz));
+  const txt = '◎ ' + fmtHzP(hz, cursorDigits(hz)) + '  ·  ' + fmtLen(freqToLen(hz));
   ctx.font = '600 11px "Segoe UI", system-ui, sans-serif';
   const tw = ctx.measureText(txt).width;
   const bx = Math.min(Math.max(x - tw / 2 - 8, PAD.left), W - PAD.right - tw - 16);
@@ -372,6 +420,10 @@ function drawGrid() {
   const showMinor = pxPerDecade > 70;
   const labelMinor = pxPerDecade > 360;
 
+  // vista stretta (meno di mezza decade): tacche lineari "tonde" in Hz,
+  // altrimenti con lo zoom forte tra due multipli 1..9 il righello resta vuoto
+  if (span < LINEAR_TICKS_SPAN) { drawLinearTicks(pxPerDecade); drawRulerFrame(); return; }
+
   for (let d = dStart; d <= dEnd; d++) {
     drawTick(d, true, pxPerDecade);
     if (showMinor) {
@@ -383,6 +435,22 @@ function drawGrid() {
     }
   }
 
+  drawRulerFrame();
+}
+
+function drawLinearTicks(pxPerDecade) {
+  const f0 = Math.pow(10, view.min), f1 = Math.pow(10, view.max);
+  const raw = (f1 - f0) / (bandAreaW() / 120);              // un'etichetta ogni ~120 px
+  const p = Math.pow(10, Math.floor(log10(raw)));
+  const n = raw / p;
+  const step = (n <= 1 ? 1 : n <= 2 ? 2 : n <= 5 ? 5 : 10) * p;
+  const sig = Math.max(3, Math.ceil(log10(f1 / step)) + 1);  // cifre per distinguere tacche vicine
+  for (let k = Math.ceil(f0 / step); k * step <= f1; k++) {
+    drawTick(log10(k * step), true, pxPerDecade, false, sig);
+  }
+}
+
+function drawRulerFrame() {
   // basi dei righelli
   ctx.strokeStyle = '#2c3a4a';
   ctx.lineWidth = 1;
@@ -397,7 +465,7 @@ function drawGrid() {
   ctx.fillText('LUNGHEZZA D’ONDA', PAD.left + 2, H - 14);
 }
 
-function drawTick(logF, major, pxPerDecade, labelMinor) {
+function drawTick(logF, major, pxPerDecade, labelMinor, sig) {
   const x = logToX(logF);
   if (x < PAD.left - 1 || x > W - PAD.right + 1) return;
   const hz = Math.pow(10, logF);
@@ -417,9 +485,9 @@ function drawTick(logF, major, pxPerDecade, labelMinor) {
     ctx.font = (major ? '12px' : '11px') + ' "Segoe UI", system-ui, sans-serif';
     ctx.textAlign = 'center';
     // Hz in alto
-    ctx.fillText(fmtHz(hz), x, PAD.top - 12);
+    ctx.fillText(sig ? fmtHzP(hz, sig) : fmtHz(hz), x, PAD.top - 12);
     // λ in basso
-    ctx.fillText(fmtLen(freqToLen(hz)), x, H - PAD.bottom + 20);
+    ctx.fillText(fmtLen(freqToLen(hz), sig), x, H - PAD.bottom + 20);
   }
 }
 
@@ -465,6 +533,68 @@ function drawBands() {
   }
 }
 
+// Un marcatore compare quando la sua banda madre è abbastanza larga da dargli contesto
+function markerVisible(m) {
+  const p = m.parent && bandById.get(m.parent);
+  if (p) return logToX(p.logTo) - logToX(p.logFrom) >= MARKER_PARENT_PX;
+  return view.max - view.min <= MARKER_NOPARENT_SPAN;
+}
+
+// Frequenze singole: pallino nella riga marcatori del gruppo, linea verticale sulle
+// corsie sottostanti, etichetta solo se c'è spazio fino al pallino successivo.
+function drawMarkers() {
+  const left = PAD.left, right = W - PAD.right;
+  let hoverLabel = null;
+  ctx.font = '600 11px "Segoe UI", system-ui, sans-serif';
+  for (const g of layout.groups) {
+    const vis = [];
+    for (const m of g.markers) {       // già ordinati per frequenza
+      m.x = null;
+      if (!markerVisible(m)) continue;
+      const x = logToX(m.logFrom);
+      if (x < left || x > right) continue;
+      m.x = x;
+      vis.push(m);
+    }
+    vis.forEach((m, i) => {
+      const x = m.x;
+      const col = bandColor(m);
+      const on = hovered === m || selected === m;
+      const cy = g.markY + MARK_ROW / 2;
+      ctx.strokeStyle = rgba(col, on ? 1 : 0.5);
+      ctx.lineWidth = on ? 2 : 1;
+      ctx.setLineDash(on ? [] : [3, 3]);
+      line(x + 0.5, cy + 4, x + 0.5, g.laneY + g.height);
+      ctx.setLineDash([]);
+      ctx.fillStyle = col;
+      ctx.beginPath(); ctx.arc(x + 0.5, cy, on ? 4.5 : 3.5, 0, Math.PI * 2); ctx.fill();
+
+      const tw = ctx.measureText(m.name).width;
+      const lx = x + 8;
+      const limit = i + 1 < vis.length ? vis[i + 1].x - 8 : right;
+      if (on) hoverLabel = { m, lx, cy, tw };
+      else if (lx + tw < limit) {
+        ctx.fillStyle = 'rgba(230,237,243,.78)';
+        ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+        ctx.fillText(m.name, lx, cy + 0.5);
+      }
+    });
+  }
+  // l'etichetta del marcatore attivo si scrive sempre, su fondo pieno, sopra le altre
+  if (hoverLabel) {
+    const { m, cy, tw } = hoverLabel;
+    const lx = Math.min(hoverLabel.lx, right - tw - 10);
+    ctx.fillStyle = 'rgba(10,14,20,.94)';
+    roundRect(lx - 5, cy - 9, tw + 10, 18, 5); ctx.fill();
+    ctx.strokeStyle = bandColor(m); ctx.lineWidth = 1;
+    roundRect(lx - 5, cy - 9, tw + 10, 18, 5); ctx.stroke();
+    ctx.fillStyle = '#f3f7fb';
+    ctx.font = '600 11px "Segoe UI", system-ui, sans-serif';
+    ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+    ctx.fillText(m.name, lx, cy + 0.5);
+  }
+}
+
 function paintVisible(x, y, w, h, b) {
   // gradiente arcobaleno reale lungo la banda (sx = bassa f = rosso, dx = alta f = violetto)
   const grad = ctx.createLinearGradient(x, 0, x + w, 0);
@@ -502,7 +632,7 @@ function drawBandLabel(b, x0, x1, y, h) {
 
     ctx.fillStyle = 'rgba(230,237,243,.62)';
     ctx.font = '11px "Segoe UI", system-ui, sans-serif';
-    let sub = fmtHz(b.from) + ' – ' + fmtHz(b.to);
+    let sub = fmtHzP(b.from) + ' – ' + fmtHzP(b.to);
     if (b.mode) sub += '  ·  ' + modeLabel(b.mode);
     ctx.fillText(sub, x0 + pad, y + h / 2 + 9);
   } else {
@@ -537,7 +667,7 @@ function drawCursor() {
   ctx.setLineDash([]);
 
   // etichetta fluttuante
-  const txt = fmtHz(hz) + '   ·   ' + fmtLen(freqToLen(hz));
+  const txt = fmtHzP(hz, cursorDigits(hz)) + '   ·   ' + fmtLen(freqToLen(hz));
   ctx.font = '600 12px "Segoe UI", system-ui, sans-serif';
   const tw = ctx.measureText(txt).width;
   const bx = Math.min(Math.max(x - tw / 2 - 8, PAD.left), W - PAD.right - tw - 16);
@@ -584,6 +714,27 @@ function bandAt(px, py) {
   }
   return null;
 }
+
+// Marcatore più vicino in orizzontale (entro `tol` px, il doppio sulla riga dei pallini)
+function markerAt(px, py, tol) {
+  if (py < PAD.top || py > H - PAD.bottom) return null;
+  let best = null, bestD = Infinity;
+  for (const g of layout.groups) {
+    if (!g.markers.length) continue;
+    const top = g.markY - scrollY, bottom = g.laneY + g.height - scrollY;
+    if (py < top || py > bottom) continue;
+    const t = py < top + MARK_ROW ? tol * 2 : tol;
+    for (const m of g.markers) {
+      if (m.x == null) continue;
+      const d = Math.abs(px - m.x);
+      if (d <= t && d < bestD) { bestD = d; best = m; }
+    }
+  }
+  return best;
+}
+
+// i marcatori hanno la precedenza: sono sottili e stanno sopra le bande
+const itemAt = (px, py, touch) => markerAt(px, py, touch ? 10 : 4) || bandAt(px, py);
 
 // ================= Interazione =================
 
@@ -634,65 +785,141 @@ function clampViewEdges() {
   if (view.max - view.min > axisMax - axisMin) { view.min = axisMin; view.max = axisMax; }
 }
 
-function onMouseDown(e) {
-  const rect = canvas.getBoundingClientRect();
-  const mx = e.clientX - rect.left, my = e.clientY - rect.top;
+// ---- Puntatori (mouse, penna, touch) ----
+// Un dito / tasto sinistro trascinato sposta le frequenze (↔) e le corsie (↕);
+// due dita fanno lo zoom a pizzico; un tocco senza movimento seleziona.
+const pointers = new Map();       // pointerId → {x, y} nel canvas
+let gesture = null;               // {type:'pan', sx, sy, lx, ly, moved, touch} | {type:'pinch', d0, span0, anchor, my}
 
-  const sb = scrollbarAt(mx, my);
-  if (sb === 'h') {
-    const hs = hScrollGeom();
-    const onThumb = mx >= hs.thumbX && mx <= hs.thumbX + hs.thumbW;
-    sbDrag = { axis: 'h', off: onThumb ? mx - hs.thumbX : hs.thumbW / 2 };
-    setHScroll(mx);
-    return;
-  }
-  if (sb === 'v') {
-    const vs = vScrollGeom();
-    const onThumb = my >= vs.thumbY && my <= vs.thumbY + vs.thumbH;
-    sbDrag = { axis: 'v', off: onThumb ? my - vs.thumbY : vs.thumbH / 2 };
-    setVScroll(my);
-    return;
-  }
-  drag = { x: e.clientX, y: e.clientY, moved: false };
+function localXY(e) {
+  const rect = canvas.getBoundingClientRect();
+  return { x: e.clientX - rect.left, y: e.clientY - rect.top };
 }
 
-function onMouseMove(e) {
-  const rect = canvas.getBoundingClientRect();
-  mouse.x = e.clientX - rect.left;
-  mouse.y = e.clientY - rect.top;
-  mouse.inside = true;
+const clampScroll = (y) => Math.max(0, Math.min(layout.maxScroll, y));
+
+function startPan(p, touch, moved) {
+  gesture = { type: 'pan', sx: p.x, sy: p.y, lx: p.x, ly: p.y, moved, touch };
+}
+
+function startPinch() {
+  const [a, b] = [...pointers.values()];
+  gesture = {
+    type: 'pinch',
+    d0: Math.hypot(a.x - b.x, a.y - b.y) || 1,
+    span0: view.max - view.min,
+    anchor: xToLog((a.x + b.x) / 2),   // frequenza che resta sotto il centro delle dita
+    my: (a.y + b.y) / 2,
+  };
+}
+
+function onPointerDown(e) {
+  if (e.pointerType === 'mouse' && e.button !== 0) return;
+  const p = localXY(e);
+  try { canvas.setPointerCapture(e.pointerId); } catch { /* puntatore sintetico o già rilasciato */ }
+  pointers.set(e.pointerId, p);
+
+  if (pointers.size === 1) {
+    const sb = scrollbarAt(p.x, p.y);
+    if (sb === 'h') {
+      const hs = hScrollGeom();
+      const onThumb = p.x >= hs.thumbX && p.x <= hs.thumbX + hs.thumbW;
+      sbDrag = { axis: 'h', off: onThumb ? p.x - hs.thumbX : hs.thumbW / 2 };
+      setHScroll(p.x);
+      return;
+    }
+    if (sb === 'v') {
+      const vs = vScrollGeom();
+      const onThumb = p.y >= vs.thumbY && p.y <= vs.thumbY + vs.thumbH;
+      sbDrag = { axis: 'v', off: onThumb ? p.y - vs.thumbY : vs.thumbH / 2 };
+      setVScroll(p.y);
+      return;
+    }
+    startPan(p, e.pointerType !== 'mouse', false);
+  } else if (pointers.size === 2) {
+    sbDrag = null;
+    startPinch();
+  }
+}
+
+function onPointerMove(e) {
+  const p = localXY(e);
+  if (e.pointerType === 'mouse') { mouse.x = p.x; mouse.y = p.y; mouse.inside = true; }
 
   if (sbDrag) {
-    if (sbDrag.axis === 'h') setHScroll(mouse.x);
-    else setVScroll(mouse.y);
+    if (sbDrag.axis === 'h') setHScroll(p.x);
+    else setVScroll(p.y);
     return;
   }
 
-  if (drag && Math.hypot(e.clientX - drag.x, e.clientY - drag.y) > 4) drag.moved = true;
+  if (pointers.has(e.pointerId)) {
+    pointers.set(e.pointerId, p);
 
+    if (gesture && gesture.type === 'pan') {
+      if (!gesture.moved && Math.hypot(p.x - gesture.sx, p.y - gesture.sy) > (gesture.touch ? 8 : 4)) gesture.moved = true;
+      if (gesture.moved) {
+        const dLog = (p.x - gesture.lx) / bandAreaW() * (view.max - view.min);
+        view.min -= dLog; view.max -= dLog;
+        clampViewEdges();
+        scrollY = clampScroll(scrollY - (p.y - gesture.ly));
+        canvas.style.cursor = 'grabbing';
+        scheduleDraw();
+      }
+      gesture.lx = p.x; gesture.ly = p.y;
+      return;
+    }
+
+    if (gesture && gesture.type === 'pinch' && pointers.size >= 2) {
+      const [a, b] = [...pointers.values()];
+      const d = Math.hypot(a.x - b.x, a.y - b.y) || 1;
+      const mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+      const span = Math.min(Math.max(gesture.span0 * gesture.d0 / d, TAU_MIN_SPAN), axisMax - axisMin);
+      const f = (mx - PAD.left) / bandAreaW();
+      view.min = gesture.anchor - f * span;
+      view.max = view.min + span;
+      clampViewEdges();
+      scrollY = clampScroll(scrollY - (my - gesture.my));
+      gesture.my = my;
+      scheduleDraw();
+      return;
+    }
+  }
+
+  // hover: solo mouse senza tasti premuti
+  if (e.pointerType !== 'mouse') return;
   const sb = scrollbarAt(mouse.x, mouse.y);
-  if (sb !== hoverSB) hoverSB = sb;
+  hoverSB = sb;
   if (sb) {
     hovered = null;
     canvas.style.cursor = sb === 'v' ? 'ns-resize' : 'ew-resize';
     scheduleDraw();
     return;
   }
-
-  const h = bandAt(mouse.x, mouse.y);
-  if (h !== hovered) { hovered = h; }
-  canvas.style.cursor = h ? 'pointer' : 'default';
+  hovered = itemAt(mouse.x, mouse.y, false);
+  canvas.style.cursor = hovered ? 'pointer' : 'grab';
   scheduleDraw();
 }
 
-function onMouseUp(e) {
+function onPointerUp(e) {
+  if (!pointers.has(e.pointerId)) return;
+  const p = localXY(e);
+  pointers.delete(e.pointerId);
   if (sbDrag) { sbDrag = null; return; }
-  if (drag && !drag.moved) {
-    const b = bandAt(mouse.x, mouse.y);
-    if (b) selectBand(b);
+
+  // tocco o click senza trascinamento → selezione
+  if (e.type === 'pointerup' && gesture && gesture.type === 'pan' && !gesture.moved && pointers.size === 0) {
+    const it = itemAt(p.x, p.y, gesture.touch);
+    if (it) selectBand(it);
     else closePanel();
   }
-  drag = null;
+
+  // da due dita a una: si riparte con un pan già "mosso" (niente selezione, niente salto)
+  if (pointers.size === 1) startPan([...pointers.values()][0], true, true);
+  else if (pointers.size === 0) gesture = null;
+
+  if (e.pointerType !== 'mouse') { mouse.inside = false; hovered = null; }
+  canvas.style.cursor = e.pointerType === 'mouse' ? 'grab' : 'default';
+  scheduleDraw();
 }
 
 function onMouseLeave() {
@@ -702,10 +929,18 @@ function onMouseLeave() {
   scheduleDraw();
 }
 
-// zoom-to-fit animato su una banda
+// zoom-to-fit animato su una banda; per un marcatore, sulla sua banda madre
+// (così compare con il suo contesto) ma centrato sulla frequenza
 function zoomToBand(b) {
-  const span = Math.max((b.logTo - b.logFrom) * 1.35, TAU_MIN_SPAN);
-  const center = (b.logFrom + b.logTo) / 2;
+  let span, center;
+  if (b.point) {
+    const p = b.parent && bandById.get(b.parent);
+    span = p ? Math.max((p.logTo - p.logFrom) * 1.35, TAU_MIN_SPAN) : MARKER_NOPARENT_SPAN * 0.8;
+    center = b.logFrom;
+  } else {
+    span = Math.max((b.logTo - b.logFrom) * 1.35, TAU_MIN_SPAN);
+    center = (b.logFrom + b.logTo) / 2;
+  }
   animateView(center - span / 2, center + span / 2);
 }
 
@@ -783,12 +1018,14 @@ function renderPanel(b) {
       <span class="tag scope">${scopeLabel}</span>
       ${b.mode ? `<span class="tag mode">${modeLabel(b.mode)}</span>` : ''}
     </div>
-    <dl>
-      <dt>Da</dt><dd>${fmtHz(b.from)}</dd>
-      <dt>A</dt><dd>${fmtHz(b.to)}</dd>
-      <dt>Larghezza</dt><dd>${fmtHz(b.to - b.from)}</dd>
+    <dl>${b.point ? `
+      <dt>Frequenza</dt><dd>${fmtHzP(b.from)}</dd>
+      <dt>λ</dt><dd>${fmtLen(freqToLen(b.from))}</dd>` : `
+      <dt>Da</dt><dd>${fmtHzP(b.from)}</dd>
+      <dt>A</dt><dd>${fmtHzP(b.to)}</dd>
+      <dt>Larghezza</dt><dd>${fmtHzP(b.to - b.from)}</dd>
       <dt>λ (da)</dt><dd>${fmtLen(freqToLen(b.from))}</dd>
-      <dt>λ (a)</dt><dd>${fmtLen(freqToLen(b.to))}</dd>
+      <dt>λ (a)</dt><dd>${fmtLen(freqToLen(b.to))}</dd>`}
     </dl>
     ${b.notes ? `<p class="notes">${b.notes}</p>` : ''}
     <div class="source">
@@ -796,6 +1033,7 @@ function renderPanel(b) {
       ${src.url ? `<a href="${src.url}" target="_blank" rel="noopener">${src.title || src.url}</a>` : '<em>Non specificata</em>'}
       ${src.authority ? `<div class="meta">${src.authority}</div>` : ''}
     </div>
+    <button class="copy-link" type="button">🔗 Copia link a questa vista</button>
   `;
   const panel = document.getElementById('panel');
   document.getElementById('panelBody').innerHTML = body;
@@ -803,6 +1041,16 @@ function renderPanel(b) {
   panel.querySelectorAll('.breadcrumb a').forEach(a => {
     a.addEventListener('click', () => { const t = bandById.get(a.dataset.id); if (t) selectBand(t); });
   });
+  panel.querySelector('.copy-link').addEventListener('click', (e) => copyLink(e.currentTarget));
+}
+
+// copia l'URL della vista attuale (il link si aggiorna comunque da solo nella barra)
+async function copyLink(btn) {
+  writeHash();
+  const old = btn.textContent;
+  try { await navigator.clipboard.writeText(location.href); btn.textContent = '✓ Link copiato'; }
+  catch { btn.textContent = 'Copia il link dalla barra degli indirizzi'; }
+  setTimeout(() => { btn.textContent = old; }, 1800);
 }
 
 function closePanel() {
@@ -811,7 +1059,111 @@ function closePanel() {
   scheduleDraw();
 }
 
-// ================= Legenda =================
+// ================= Filtri (tendina) =================
+
+function buildFilterMenu() {
+  const all = [...allRanges, ...allMarkers];
+  const scopes = [...SCOPE_ORDER, 'other'].filter((sc) => all.some((b) => scopeKey(b) === sc));
+  document.getElementById('fScopes').innerHTML = scopes.map((sc) =>
+    `<label class="fm-item"><input type="checkbox" data-scope="${sc}"><span>${SCOPE_META[sc].label}</span></label>`).join('');
+  const used = new Set(all.map((b) => b.category));
+  document.getElementById('fCats').innerHTML = Object.entries(categories).filter(([k]) => used.has(k)).map(([k, c]) =>
+    `<label class="fm-item"><input type="checkbox" data-cat="${k}"><span class="sw" style="background:${c.color}"></span><span>${c.label}</span></label>`).join('');
+
+  const menu = document.getElementById('filterMenu');
+  const btn = document.getElementById('filterBtn');
+  btn.addEventListener('click', () => {
+    const open = !menu.classList.toggle('hidden');
+    btn.setAttribute('aria-expanded', open);
+  });
+  document.addEventListener('pointerdown', (e) => {
+    if (!e.target.closest('.filters')) { menu.classList.add('hidden'); btn.setAttribute('aria-expanded', 'false'); }
+  });
+  menu.addEventListener('change', (e) => {
+    const t = e.target;
+    if (t.dataset.scope) toggle(hiddenScopes, t.dataset.scope, !t.checked);
+    else if (t.dataset.cat) toggle(hiddenCats, t.dataset.cat, !t.checked);
+    else if (t.id === 'fMarkers') showMarkers = t.checked;
+    filtersChanged();
+  });
+  menu.querySelectorAll('[data-all]').forEach((b) => b.addEventListener('click', () => {
+    hiddenCats = b.dataset.all === '1' ? new Set() : new Set(used);
+    filtersChanged();
+  }));
+  syncFilterUI();
+}
+
+function toggle(set, key, on) { if (on) set.add(key); else set.delete(key); }
+
+function filtersChanged() {
+  applyFilters();
+  computeGeometry();
+  syncFilterUI();
+  scheduleDraw();
+}
+
+function syncFilterUI() {
+  document.querySelectorAll('#filterMenu [data-scope]').forEach((i) => { i.checked = !hiddenScopes.has(i.dataset.scope); });
+  document.querySelectorAll('#filterMenu [data-cat]').forEach((i) => { i.checked = !hiddenCats.has(i.dataset.cat); });
+  document.getElementById('fMarkers').checked = showMarkers;
+  const n = hiddenScopes.size + hiddenCats.size + (showMarkers ? 0 : 1);
+  const badge = document.getElementById('filterCount');
+  badge.textContent = n;
+  badge.classList.toggle('hidden', n === 0);
+}
+
+// ================= Vista nell'URL =================
+// #v=min,max (log10 Hz) · sel=id · f=Hz del marker ◎ · hs/hc = enti/categorie nascosti · mk=0
+
+let hashReady = false, hashTimer = 0;
+function scheduleHash() {
+  if (!hashReady) return;
+  clearTimeout(hashTimer);
+  hashTimer = setTimeout(writeHash, 250);
+}
+
+function writeHash() {
+  const q = [];
+  const full = Math.abs(view.min - axisMin) < 1e-6 && Math.abs(view.max - axisMax) < 1e-6;
+  if (!full) q.push('v=' + view.min.toFixed(5) + ',' + view.max.toFixed(5));
+  if (selected) q.push('sel=' + encodeURIComponent(selected.id));
+  if (focusMark != null) q.push('f=' + +Math.pow(10, focusMark).toPrecision(10));
+  if (hiddenScopes.size) q.push('hs=' + [...hiddenScopes].join(','));
+  if (hiddenCats.size) q.push('hc=' + [...hiddenCats].join(','));
+  if (!showMarkers) q.push('mk=0');
+  const hash = q.length ? '#' + q.join('&') : '';
+  if (hash !== location.hash) history.replaceState(null, '', location.pathname + location.search + hash);
+}
+
+function readHash() {
+  const q = new URLSearchParams(location.hash.slice(1));
+  const list = (k) => (q.get(k) || '').split(',').filter(Boolean);
+  hiddenScopes = new Set(list('hs'));
+  hiddenCats = new Set(list('hc'));
+  showMarkers = q.get('mk') !== '0';
+  applyFilters();
+  computeGeometry();
+  syncFilterUI();
+
+  const v = list('v').map(Number);
+  const hasView = v.length === 2 && v.every(isFinite) && v[1] - v[0] >= TAU_MIN_SPAN;
+  if (hasView) { view.min = v[0]; view.max = v[1]; clampViewEdges(); }
+  else { view.min = axisMin; view.max = axisMax; }
+  const f = Number(q.get('f'));
+  focusMark = f > 0 ? Math.max(axisMin, Math.min(axisMax, log10(f))) : null;
+
+  const sel = bandById.get(q.get('sel') || '');
+  if (sel && isShown(sel)) {
+    selected = sel;
+    renderPanel(sel);
+    if (!hasView) zoomToBand(sel);
+    scrollIntoView(sel);
+  } else if (selected) {
+    selected = null;
+    document.getElementById('panel').classList.add('hidden');
+  }
+  draw();
+}
 
 // ================= Loop di disegno =================
 
@@ -913,7 +1265,7 @@ function renderResults() {
     return `<div class="res${i === searchActive ? ' active' : ''}" data-i="${i}">
       <span class="dot" style="background:${bandColor(b)}"></span>
       <span class="txt"><div class="nm">${b.name}</div><div class="sub">${bits.join(' · ')}</div></span>
-      <span class="rng">${fmtHz(b.from)}–${fmtHz(b.to)}</span>
+      <span class="rng">${b.point ? fmtHzP(b.from) : fmtHzP(b.from, 4) + '–' + fmtHzP(b.to, 4)}</span>
     </div>`;
   }).join('');
   box.classList.remove('hidden');
@@ -942,17 +1294,22 @@ async function init() {
   }
 
   resize();
-  window.addEventListener('resize', resize);
+  new ResizeObserver(resize).observe(document.getElementById('stage'));   // anche quando la barra va a capo
   canvas.addEventListener('wheel', onWheel, { passive: false });
-  canvas.addEventListener('mousedown', onMouseDown);
-  window.addEventListener('mousemove', onMouseMove);
-  window.addEventListener('mouseup', onMouseUp);
-  canvas.addEventListener('mouseleave', onMouseLeave);
+  canvas.addEventListener('pointerdown', onPointerDown);
+  canvas.addEventListener('pointermove', onPointerMove);
+  canvas.addEventListener('pointerup', onPointerUp);
+  canvas.addEventListener('pointercancel', onPointerUp);
+  canvas.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse' && !pointers.size) onMouseLeave(); });
   document.getElementById('resetBtn').addEventListener('click', () => { focusMark = null; animateView(axisMin, axisMax); });
   document.getElementById('panelClose').addEventListener('click', closePanel);
   window.addEventListener('keydown', (e) => { if (e.key === 'Escape') closePanel(); });
 
   setupControls();
+  buildFilterMenu();
+  if (location.hash.length > 1) readHash();
+  hashReady = true;
+  window.addEventListener('hashchange', readHash);   // link incollato nella stessa scheda
 }
 
 function setupControls() {

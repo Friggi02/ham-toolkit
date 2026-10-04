@@ -808,8 +808,6 @@
     {
       "id": "itu-lf-dcf77",
       "name": "LF DCF77 – Segnale orario Germania 77.5 kHz",
-      "from": 77400,
-      "to": 77600,
       "category": "scientific",
       "scope": "world",
       "parent": "itu-lf-radionav-70-90",
@@ -819,7 +817,8 @@
         "title": "DCF77 – Physikalisch-Technische Bundesanstalt (PTB)",
         "authority": "PTB Germany"
       },
-      "sourceTier": "primary"
+      "sourceTier": "primary",
+      "freq": 77500
     },
     {
       "id": "itu-lf-radionav-loran-90-110",
@@ -1001,8 +1000,6 @@
     {
       "id": "itu-mf-navtex-490",
       "name": "MF 490 kHz – NAVTEX nazionale",
-      "from": 487500,
-      "to": 492500,
       "category": "maritime",
       "scope": "world",
       "parent": "itu-mf-aero-mar-mob-415-495",
@@ -1012,7 +1009,8 @@
         "title": "ITU-R Report M.2201 – Utilization of the 495-505 kHz band by the maritime mobile service",
         "authority": "ITU-R"
       },
-      "sourceTier": "primary"
+      "sourceTier": "primary",
+      "freq": 490000
     },
     {
       "id": "itu-mf-ham-630m",
@@ -1050,8 +1048,6 @@
     {
       "id": "itu-mf-navtex-518",
       "name": "MF 518 kHz – NAVTEX internazionale",
-      "from": 515500,
-      "to": 520500,
       "category": "maritime",
       "scope": "world",
       "parent": "itu-mf",
@@ -1061,7 +1057,8 @@
         "title": "NAVTEX Maritime Safety Broadcasts – US Coast Guard Navigation Center",
         "authority": "US Coast Guard / IMO"
       },
-      "sourceTier": "secondary"
+      "sourceTier": "secondary",
+      "freq": 518000
     },
     {
       "id": "itu-mf-mar-mob-505-5265",
@@ -1195,8 +1192,6 @@
     {
       "id": "itu-mf-mar-2182",
       "name": "MF 2182 kHz – Frequenza Soccorso Radiotelefonico",
-      "from": 2179500,
-      "to": 2184500,
       "category": "maritime",
       "scope": "world",
       "parent": "itu-mf-mar-distress-21735-21905",
@@ -1206,7 +1201,8 @@
         "title": "2182 kHz – Wikipedia",
         "authority": "Wikipedia"
       },
-      "sourceTier": "secondary"
+      "sourceTier": "secondary",
+      "freq": 2182000
     },
     {
       "id": "itu-mf-mar-fixed-21905-2300",
@@ -3349,8 +3345,6 @@
     {
       "id": "itu-uhf-hydrogen-line-1420",
       "name": "Riga dell'idrogeno 1420,405 MHz (21 cm)",
-      "from": 1420000000,
-      "to": 1421000000,
       "category": "scientific",
       "scope": "physics",
       "parent": "itu-uhf-passive-1400-1427",
@@ -3360,7 +3354,8 @@
         "title": "Hydrogen line - Wikipedia",
         "authority": "Wikipedia"
       },
-      "sourceTier": "secondary"
+      "sourceTier": "secondary",
+      "freq": 1420405751.768
     },
     {
       "id": "itu-uhf-lte-b20-791-862",
@@ -6544,8 +6539,8 @@
     },
     {
       "id": "ham-2m-fm-simplex",
-      "name": "2m FM Simplex (145.194-145.5625 MHz)",
-      "from": 145194000,
+      "name": "2m FM Simplex (145.206-145.5625 MHz)",
+      "from": 145206000,
       "to": 145562500,
       "category": "amateur",
       "scope": "europe",
@@ -6612,30 +6607,13 @@
     },
     {
       "id": "ham-70cm-cw",
-      "name": "70cm CW/MGM (432.000-432.100 MHz)",
+      "name": "70cm CW/SSB/MGM (432.000-432.400 MHz)",
       "from": 432000000,
-      "to": 432100000,
-      "category": "amateur",
-      "scope": "europe",
-      "mode": "cw",
-      "notes": "Segmento CW/MGM (max 500 Hz): centro telegrafia a 432.050 MHz, attivita EME.",
-      "source": {
-        "url": "https://www.iaru-r1.org/wp-content/uploads/2021/03/UHF-Bandplan.pdf",
-        "title": "IARU Region 1 UHF Band Plan (effective December 2020)",
-        "authority": "IARU Region 1"
-      },
-      "sourceTier": "primary",
-      "parent": "ham-70cm"
-    },
-    {
-      "id": "ham-70cm-ssb",
-      "name": "70cm SSB/CW/MGM (432.100-432.400 MHz)",
-      "from": 432100000,
       "to": 432400000,
       "category": "amateur",
       "scope": "europe",
-      "mode": "phone",
-      "notes": "Segmento SSB/CW/MGM (max 2700 Hz): centro SSB a 432.200 MHz, talkback microonde a 432.350 MHz, MS a 432.370 MHz.",
+      "mode": "mixed",
+      "notes": "Segmento unico tutti i modi a banda stretta (≤ 2700 Hz): centro CW 432,050 MHz, centro SSB 432,200 MHz, EME.",
       "source": {
         "url": "https://www.iaru-r1.org/wp-content/uploads/2021/03/UHF-Bandplan.pdf",
         "title": "IARU Region 1 UHF Band Plan (effective December 2020)",
@@ -6665,7 +6643,7 @@
       "id": "ham-70cm-allmode",
       "name": "70cm Tutti i modi (432.500-433.000 MHz)",
       "from": 432500000,
-      "to": 433000000,
+      "to": 432975000,
       "category": "amateur",
       "scope": "europe",
       "mode": "mixed",
@@ -6697,9 +6675,9 @@
     },
     {
       "id": "ham-70cm-fm-simplex",
-      "name": "70cm FM Simplex (433.375-434.000 MHz)",
-      "from": 433375000,
-      "to": 434000000,
+      "name": "70cm FM Simplex (433.400-433.5875 MHz)",
+      "from": 433400000,
+      "to": 433587500,
       "category": "amateur",
       "scope": "europe",
       "mode": "phone",
@@ -6714,9 +6692,9 @@
     },
     {
       "id": "ham-70cm-digital",
-      "name": "70cm Digitale/ATV (434.000-435.000 MHz)",
+      "name": "70cm Tutti i modi/Digitale (434.000-434.5875 MHz)",
       "from": 434000000,
-      "to": 435000000,
+      "to": 434587500,
       "category": "amateur",
       "scope": "europe",
       "mode": "digital",
@@ -6748,13 +6726,13 @@
     },
     {
       "id": "ham-70cm-atv",
-      "name": "70cm ATV/FM Repeater Output (438.000-440.000 MHz)",
+      "name": "70cm Tutti i modi / Ripetitori (438.000-440.000 MHz)",
       "from": 438000000,
       "to": 440000000,
       "category": "amateur",
       "scope": "europe",
       "mode": "mixed",
-      "notes": "Canali digitali, ATV e output repeater FM (438.650-439.425 MHz, shift 7.6 MHz).",
+      "notes": "Tutti i modi: canali digitali (438,025-438,175), ripetitori digitali, multimodo, uscite ripetitori FM 438,650-439,5875 MHz (shift 7,6 MHz), link digitali 439,800-439,975 MHz. ATV analogico non più ammesso dal 2021.",
       "source": {
         "url": "https://www.iaru-r1.org/wp-content/uploads/2021/03/UHF-Bandplan.pdf",
         "title": "IARU Region 1 UHF Band Plan (effective December 2020)",
@@ -6931,7 +6909,7 @@
         "authority": "IARU Region 1"
       },
       "sourceTier": "primary",
-      "parent": "itu-shf"
+      "parent": "itu-uhf"
     },
     {
       "id": "ham-13cm-mixed-low",
@@ -7322,7 +7300,7 @@
         "authority": "IARU Region 1"
       },
       "sourceTier": "primary",
-      "parent": "itu-ehf"
+      "parent": "itu-shf"
     },
     {
       "id": "ham-12mm-wideband",
@@ -9071,6 +9049,2064 @@
         "authority": "AGCOM"
       },
       "sourceTier": "primary"
+    },
+    {
+      "id": "ham-2m-mgm-exp",
+      "name": "2m Beacon personali MGM sperimentali (144.491-144.493 MHz)",
+      "from": 144491000,
+      "to": 144493000,
+      "category": "amateur",
+      "scope": "europe",
+      "mode": "digital",
+      "parent": "ham-2m",
+      "notes": "Beacon personali weak-signal e MGM sperimentale, max 500 Hz. 144,490-144,491 e 144,493-144,500 MHz restano liberi come guardia.",
+      "source": {
+        "url": "https://www.iaru-r1.org/wp-content/uploads/2026/02/VHF_Handbook_V10_03_final.pdf",
+        "title": "IARU Region 1 VHF Handbook v10.03 (febbraio 2026) – band plan 144-146 MHz e 430-440 MHz",
+        "authority": "IARU Region 1"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "ham-2m-space-145200",
+      "name": "2m Comunicazioni spaziali (145.194-145.206 MHz)",
+      "from": 145194000,
+      "to": 145206000,
+      "category": "amateur",
+      "scope": "europe",
+      "mode": "phone",
+      "parent": "ham-2m",
+      "notes": "Canale FM/voce digitale per stazioni spaziali con equipaggio: 145,200 MHz in simplex o come uplink per l'ISS in Regione 1 (split 145,200/145,800).",
+      "source": {
+        "url": "https://www.iaru-r1.org/wp-content/uploads/2026/02/VHF_Handbook_V10_03_final.pdf",
+        "title": "IARU Region 1 VHF Handbook v10.03 (febbraio 2026) – band plan 144-146 MHz e 430-440 MHz",
+        "authority": "IARU Region 1"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "ham-2m-space-145800",
+      "name": "2m Comunicazioni spaziali (145.794-145.806 MHz)",
+      "from": 145794000,
+      "to": 145806000,
+      "category": "amateur",
+      "scope": "europe",
+      "mode": "phone",
+      "parent": "ham-2m",
+      "notes": "Canale FM/voce digitale per stazioni spaziali con equipaggio: contiene 145,800 MHz, downlink voce e SSTV dell'ISS.",
+      "source": {
+        "url": "https://www.iaru-r1.org/wp-content/uploads/2026/02/VHF_Handbook_V10_03_final.pdf",
+        "title": "IARU Region 1 VHF Handbook v10.03 (febbraio 2026) – band plan 144-146 MHz e 430-440 MHz",
+        "authority": "IARU Region 1"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "ham-70cm-subregional",
+      "name": "70cm Pianificazione nazionale (430.000-432.000 MHz)",
+      "from": 430000000,
+      "to": 432000000,
+      "category": "amateur",
+      "scope": "europe",
+      "mode": "mixed",
+      "parent": "ham-70cm",
+      "notes": "Segmento a pianificazione sub-regionale/nazionale (fino a 431,975 MHz): canali ripetitori, link e ripetitori digitali secondo i piani nazionali.",
+      "source": {
+        "url": "https://www.iaru-r1.org/wp-content/uploads/2026/02/VHF_Handbook_V10_03_final.pdf",
+        "title": "IARU Region 1 VHF Handbook v10.03 (febbraio 2026) – band plan 144-146 MHz e 430-440 MHz",
+        "authority": "IARU Region 1"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "ham-70cm-mgm-exp",
+      "name": "70cm MGM sperimentale (432.491-432.493 MHz)",
+      "from": 432491000,
+      "to": 432493000,
+      "category": "amateur",
+      "scope": "europe",
+      "mode": "digital",
+      "parent": "ham-70cm",
+      "notes": "Segmento per modi digitali sperimentali a banda stretta (EMGM), max 500 Hz.",
+      "source": {
+        "url": "https://www.iaru-r1.org/wp-content/uploads/2026/02/VHF_Handbook_V10_03_final.pdf",
+        "title": "IARU Region 1 VHF Handbook v10.03 (febbraio 2026) – band plan 144-146 MHz e 430-440 MHz",
+        "authority": "IARU Region 1"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "ham-70cm-allmode-433600",
+      "name": "70cm Tutti i modi / Digitale (433.600-434.000 MHz)",
+      "from": 433600000,
+      "to": 434000000,
+      "category": "amateur",
+      "scope": "europe",
+      "mode": "mixed",
+      "parent": "ham-70cm",
+      "notes": "Tutti i modi: canali per comunicazioni digitali (433,625-433,775 MHz) e sperimentazione digitale, incluso LoRa.",
+      "source": {
+        "url": "https://www.iaru-r1.org/wp-content/uploads/2026/02/VHF_Handbook_V10_03_final.pdf",
+        "title": "IARU Region 1 VHF Handbook v10.03 (febbraio 2026) – band plan 144-146 MHz e 430-440 MHz",
+        "authority": "IARU Region 1"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "ham-70cm-fm-output",
+      "name": "70cm FM Repeater Output (434.600-434.9875 MHz)",
+      "from": 434600000,
+      "to": 434987500,
+      "category": "amateur",
+      "scope": "europe",
+      "mode": "phone",
+      "parent": "ham-70cm",
+      "notes": "Uscite ripetitori Regione 1, passo 12,5 kHz, shift 1,6 o 2,0 MHz (nel Regno Unito sono ingressi).",
+      "source": {
+        "url": "https://www.iaru-r1.org/wp-content/uploads/2026/02/VHF_Handbook_V10_03_final.pdf",
+        "title": "IARU Region 1 VHF Handbook v10.03 (febbraio 2026) – band plan 144-146 MHz e 430-440 MHz",
+        "authority": "IARU Region 1"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "it-ham-2200m",
+      "name": "Radioamatori 2200 m (135,7–137,8 kHz)",
+      "from": 135700,
+      "to": 137800,
+      "category": "amateur",
+      "scope": "italy",
+      "mode": "mixed",
+      "parent": "itu-lf",
+      "notes": "Secondario (nota PNRF 8, RR 5.67A). Potenza max 1 W e.i.r.p.; nessuna interferenza alla radionavigazione.",
+      "source": {
+        "url": "https://www.gazzettaufficiale.it/eli/gu/2022/09/13/214/so/35/sg/pdf",
+        "title": "Piano nazionale di ripartizione delle frequenze tra 0 e 3000 GHz (DM 31 agosto 2022, GU n. 214 del 13-9-2022, S.O. n. 35)",
+        "authority": "MIMIT / Gazzetta Ufficiale"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "it-ham-630m",
+      "name": "Radioamatori 630 m (472–479 kHz)",
+      "from": 472000,
+      "to": 479000,
+      "category": "amateur",
+      "scope": "italy",
+      "mode": "mixed",
+      "parent": "itu-mf",
+      "notes": "Secondario (note PNRF 15-16, RR 5.80A). Max 1 W e.i.r.p.; nessuna interferenza ai 490 kHz (NAVTEX) né alla radionavigazione aeronautica, senza protezione.",
+      "source": {
+        "url": "https://www.gazzettaufficiale.it/eli/gu/2022/09/13/214/so/35/sg/pdf",
+        "title": "Piano nazionale di ripartizione delle frequenze tra 0 e 3000 GHz (DM 31 agosto 2022, GU n. 214 del 13-9-2022, S.O. n. 35)",
+        "authority": "MIMIT / Gazzetta Ufficiale"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "it-ham-160m",
+      "name": "Radioamatori 160 m (1830–1850 kHz)",
+      "from": 1830000,
+      "to": 1850000,
+      "category": "amateur",
+      "scope": "italy",
+      "mode": "mixed",
+      "parent": "itu-mf",
+      "notes": "Primario. In Italia la banda è solo 1830-1850 kHz: 1810-1830 e 1850-2000 kHz (previsti dal band plan IARU R1) non sono attribuiti ai radioamatori nel PNRF.",
+      "source": {
+        "url": "https://www.gazzettaufficiale.it/eli/gu/2022/09/13/214/so/35/sg/pdf",
+        "title": "Piano nazionale di ripartizione delle frequenze tra 0 e 3000 GHz (DM 31 agosto 2022, GU n. 214 del 13-9-2022, S.O. n. 35)",
+        "authority": "MIMIT / Gazzetta Ufficiale"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "it-ham-80m",
+      "name": "Radioamatori 80 m (3,5–3,8 MHz)",
+      "from": 3500000,
+      "to": 3800000,
+      "category": "amateur",
+      "scope": "italy",
+      "mode": "mixed",
+      "parent": "itu-hf",
+      "notes": "Secondario: primari il servizio fisso e il mobile escluso l'aeronautico.",
+      "source": {
+        "url": "https://www.gazzettaufficiale.it/eli/gu/2022/09/13/214/so/35/sg/pdf",
+        "title": "Piano nazionale di ripartizione delle frequenze tra 0 e 3000 GHz (DM 31 agosto 2022, GU n. 214 del 13-9-2022, S.O. n. 35)",
+        "authority": "MIMIT / Gazzetta Ufficiale"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "it-ham-60m",
+      "name": "Radioamatori 60 m (5351,5–5366,5 kHz)",
+      "from": 5351500,
+      "to": 5366500,
+      "category": "amateur",
+      "scope": "italy",
+      "mode": "mixed",
+      "parent": "itu-hf",
+      "notes": "Secondario (nota PNRF 32B, RR 5.133B, WRC-15), max 15 W e.i.r.p. La riga PNRF 5275-5450 kHz elenca 'Radioamatore' senza limiti di banda: la porzione effettivamente utilizzabile oltre 5351,5-5366,5 kHz non è chiara.",
+      "source": {
+        "url": "https://www.gazzettaufficiale.it/eli/gu/2022/09/13/214/so/35/sg/pdf",
+        "title": "Piano nazionale di ripartizione delle frequenze tra 0 e 3000 GHz (DM 31 agosto 2022, GU n. 214 del 13-9-2022, S.O. n. 35)",
+        "authority": "MIMIT / Gazzetta Ufficiale"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "it-ham-40m",
+      "name": "Radioamatori 40 m (7–7,2 MHz)",
+      "from": 7000000,
+      "to": 7200000,
+      "category": "amateur",
+      "scope": "italy",
+      "mode": "mixed",
+      "parent": "itu-hf",
+      "notes": "Primario su tutta la banda.",
+      "source": {
+        "url": "https://www.gazzettaufficiale.it/eli/gu/2022/09/13/214/so/35/sg/pdf",
+        "title": "Piano nazionale di ripartizione delle frequenze tra 0 e 3000 GHz (DM 31 agosto 2022, GU n. 214 del 13-9-2022, S.O. n. 35)",
+        "authority": "MIMIT / Gazzetta Ufficiale"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "it-ham-40m-sat",
+      "name": "40 m – anche via satellite (7–7,1 MHz)",
+      "from": 7000000,
+      "to": 7100000,
+      "category": "amateur",
+      "scope": "italy",
+      "mode": "mixed",
+      "parent": "it-ham-40m",
+      "notes": "Primario sia per il servizio di radioamatore sia per il radioamatore via satellite.",
+      "source": {
+        "url": "https://www.gazzettaufficiale.it/eli/gu/2022/09/13/214/so/35/sg/pdf",
+        "title": "Piano nazionale di ripartizione delle frequenze tra 0 e 3000 GHz (DM 31 agosto 2022, GU n. 214 del 13-9-2022, S.O. n. 35)",
+        "authority": "MIMIT / Gazzetta Ufficiale"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "it-ham-40m-upper",
+      "name": "40 m – solo terrestre (7,1–7,2 MHz)",
+      "from": 7100000,
+      "to": 7200000,
+      "category": "amateur",
+      "scope": "italy",
+      "mode": "mixed",
+      "parent": "it-ham-40m",
+      "notes": "Primario per il servizio di radioamatore; il servizio via satellite non è attribuito.",
+      "source": {
+        "url": "https://www.gazzettaufficiale.it/eli/gu/2022/09/13/214/so/35/sg/pdf",
+        "title": "Piano nazionale di ripartizione delle frequenze tra 0 e 3000 GHz (DM 31 agosto 2022, GU n. 214 del 13-9-2022, S.O. n. 35)",
+        "authority": "MIMIT / Gazzetta Ufficiale"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "it-ham-30m",
+      "name": "Radioamatori 30 m (10,1–10,15 MHz)",
+      "from": 10100000,
+      "to": 10150000,
+      "category": "amateur",
+      "scope": "italy",
+      "mode": "mixed",
+      "parent": "itu-hf",
+      "notes": "Secondario: primario il servizio fisso.",
+      "source": {
+        "url": "https://www.gazzettaufficiale.it/eli/gu/2022/09/13/214/so/35/sg/pdf",
+        "title": "Piano nazionale di ripartizione delle frequenze tra 0 e 3000 GHz (DM 31 agosto 2022, GU n. 214 del 13-9-2022, S.O. n. 35)",
+        "authority": "MIMIT / Gazzetta Ufficiale"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "it-ham-20m",
+      "name": "Radioamatori 20 m (14–14,35 MHz)",
+      "from": 14000000,
+      "to": 14350000,
+      "category": "amateur",
+      "scope": "italy",
+      "mode": "mixed",
+      "parent": "itu-hf",
+      "notes": "Primario su tutta la banda.",
+      "source": {
+        "url": "https://www.gazzettaufficiale.it/eli/gu/2022/09/13/214/so/35/sg/pdf",
+        "title": "Piano nazionale di ripartizione delle frequenze tra 0 e 3000 GHz (DM 31 agosto 2022, GU n. 214 del 13-9-2022, S.O. n. 35)",
+        "authority": "MIMIT / Gazzetta Ufficiale"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "it-ham-20m-sat",
+      "name": "20 m – anche via satellite (14–14,25 MHz)",
+      "from": 14000000,
+      "to": 14250000,
+      "category": "amateur",
+      "scope": "italy",
+      "mode": "mixed",
+      "parent": "it-ham-20m",
+      "notes": "Primario sia per il servizio di radioamatore sia per il radioamatore via satellite.",
+      "source": {
+        "url": "https://www.gazzettaufficiale.it/eli/gu/2022/09/13/214/so/35/sg/pdf",
+        "title": "Piano nazionale di ripartizione delle frequenze tra 0 e 3000 GHz (DM 31 agosto 2022, GU n. 214 del 13-9-2022, S.O. n. 35)",
+        "authority": "MIMIT / Gazzetta Ufficiale"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "it-ham-20m-upper",
+      "name": "20 m – solo terrestre (14,25–14,35 MHz)",
+      "from": 14250000,
+      "to": 14350000,
+      "category": "amateur",
+      "scope": "italy",
+      "mode": "mixed",
+      "parent": "it-ham-20m",
+      "notes": "Primario per il servizio di radioamatore; il servizio via satellite non è attribuito.",
+      "source": {
+        "url": "https://www.gazzettaufficiale.it/eli/gu/2022/09/13/214/so/35/sg/pdf",
+        "title": "Piano nazionale di ripartizione delle frequenze tra 0 e 3000 GHz (DM 31 agosto 2022, GU n. 214 del 13-9-2022, S.O. n. 35)",
+        "authority": "MIMIT / Gazzetta Ufficiale"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "it-ham-17m",
+      "name": "Radioamatori 17 m (18,068–18,168 MHz)",
+      "from": 18068000,
+      "to": 18168000,
+      "category": "amateur",
+      "scope": "italy",
+      "mode": "mixed",
+      "parent": "itu-hf",
+      "notes": "Primario, anche per il radioamatore via satellite.",
+      "source": {
+        "url": "https://www.gazzettaufficiale.it/eli/gu/2022/09/13/214/so/35/sg/pdf",
+        "title": "Piano nazionale di ripartizione delle frequenze tra 0 e 3000 GHz (DM 31 agosto 2022, GU n. 214 del 13-9-2022, S.O. n. 35)",
+        "authority": "MIMIT / Gazzetta Ufficiale"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "it-ham-15m",
+      "name": "Radioamatori 15 m (21–21,45 MHz)",
+      "from": 21000000,
+      "to": 21450000,
+      "category": "amateur",
+      "scope": "italy",
+      "mode": "mixed",
+      "parent": "itu-hf",
+      "notes": "Primario, anche per il radioamatore via satellite.",
+      "source": {
+        "url": "https://www.gazzettaufficiale.it/eli/gu/2022/09/13/214/so/35/sg/pdf",
+        "title": "Piano nazionale di ripartizione delle frequenze tra 0 e 3000 GHz (DM 31 agosto 2022, GU n. 214 del 13-9-2022, S.O. n. 35)",
+        "authority": "MIMIT / Gazzetta Ufficiale"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "it-ham-12m",
+      "name": "Radioamatori 12 m (24,89–24,99 MHz)",
+      "from": 24890000,
+      "to": 24990000,
+      "category": "amateur",
+      "scope": "italy",
+      "mode": "mixed",
+      "parent": "itu-hf",
+      "notes": "Primario, anche per il radioamatore via satellite.",
+      "source": {
+        "url": "https://www.gazzettaufficiale.it/eli/gu/2022/09/13/214/so/35/sg/pdf",
+        "title": "Piano nazionale di ripartizione delle frequenze tra 0 e 3000 GHz (DM 31 agosto 2022, GU n. 214 del 13-9-2022, S.O. n. 35)",
+        "authority": "MIMIT / Gazzetta Ufficiale"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "it-ham-10m",
+      "name": "Radioamatori 10 m (28–29,7 MHz)",
+      "from": 28000000,
+      "to": 29700000,
+      "category": "amateur",
+      "scope": "italy",
+      "mode": "mixed",
+      "parent": "itu-hf",
+      "notes": "Primario, anche per il radioamatore via satellite.",
+      "source": {
+        "url": "https://www.gazzettaufficiale.it/eli/gu/2022/09/13/214/so/35/sg/pdf",
+        "title": "Piano nazionale di ripartizione delle frequenze tra 0 e 3000 GHz (DM 31 agosto 2022, GU n. 214 del 13-9-2022, S.O. n. 35)",
+        "authority": "MIMIT / Gazzetta Ufficiale"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "it-ham-6m",
+      "name": "Radioamatori 6 m (50–52 MHz)",
+      "from": 50000000,
+      "to": 52000000,
+      "category": "amateur",
+      "scope": "italy",
+      "mode": "mixed",
+      "parent": "itu-vhf",
+      "notes": "Secondario: primario il mobile terrestre (Difesa). Nessuna interferenza ai wind profiler e nessuna protezione da essi (nota PNRF 57, RR 5.166C). 52-54 MHz non attribuiti.",
+      "source": {
+        "url": "https://www.gazzettaufficiale.it/eli/gu/2022/09/13/214/so/35/sg/pdf",
+        "title": "Piano nazionale di ripartizione delle frequenze tra 0 e 3000 GHz (DM 31 agosto 2022, GU n. 214 del 13-9-2022, S.O. n. 35)",
+        "authority": "MIMIT / Gazzetta Ufficiale"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "it-ham-2m",
+      "name": "Radioamatori 2 m (144–146 MHz)",
+      "from": 144000000,
+      "to": 146000000,
+      "category": "amateur",
+      "scope": "italy",
+      "mode": "mixed",
+      "parent": "itu-vhf",
+      "notes": "Primario, per il servizio di radioamatore e via satellite (nota PNRF 69).",
+      "source": {
+        "url": "https://www.gazzettaufficiale.it/eli/gu/2022/09/13/214/so/35/sg/pdf",
+        "title": "Piano nazionale di ripartizione delle frequenze tra 0 e 3000 GHz (DM 31 agosto 2022, GU n. 214 del 13-9-2022, S.O. n. 35)",
+        "authority": "MIMIT / Gazzetta Ufficiale"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "it-ham-2m-excl",
+      "name": "2 m – uso esclusivo radioamatori (144–145,8 MHz)",
+      "from": 144000000,
+      "to": 145800000,
+      "category": "amateur",
+      "scope": "italy",
+      "mode": "mixed",
+      "parent": "it-ham-2m",
+      "notes": "Uso esclusivo del servizio di radioamatore (nota PNRF 69).",
+      "source": {
+        "url": "https://www.gazzettaufficiale.it/eli/gu/2022/09/13/214/so/35/sg/pdf",
+        "title": "Piano nazionale di ripartizione delle frequenze tra 0 e 3000 GHz (DM 31 agosto 2022, GU n. 214 del 13-9-2022, S.O. n. 35)",
+        "authority": "MIMIT / Gazzetta Ufficiale"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "it-ham-2m-sat",
+      "name": "2 m – esclusivo via satellite (145,8–146 MHz)",
+      "from": 145800000,
+      "to": 146000000,
+      "category": "amateur",
+      "scope": "italy",
+      "mode": "mixed",
+      "parent": "it-ham-2m",
+      "notes": "Uso esclusivo del radioamatore via satellite, solo per collegamenti con satelliti radioamatoriali conformi all'ITU (nota PNRF 69).",
+      "source": {
+        "url": "https://www.gazzettaufficiale.it/eli/gu/2022/09/13/214/so/35/sg/pdf",
+        "title": "Piano nazionale di ripartizione delle frequenze tra 0 e 3000 GHz (DM 31 agosto 2022, GU n. 214 del 13-9-2022, S.O. n. 35)",
+        "authority": "MIMIT / Gazzetta Ufficiale"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "it-ham-70cm",
+      "name": "Radioamatori 70 cm (430–438 MHz)",
+      "from": 430000000,
+      "to": 438000000,
+      "category": "amateur",
+      "scope": "italy",
+      "mode": "mixed",
+      "parent": "itu-uhf",
+      "notes": "Statuto variabile per sotto-banda. 434-435 MHz e 438-440 MHz non sono attribuiti ai radioamatori nel PNRF (a differenza del band plan IARU R1 430-440 MHz).",
+      "source": {
+        "url": "https://www.gazzettaufficiale.it/eli/gu/2022/09/13/214/so/35/sg/pdf",
+        "title": "Piano nazionale di ripartizione delle frequenze tra 0 e 3000 GHz (DM 31 agosto 2022, GU n. 214 del 13-9-2022, S.O. n. 35)",
+        "authority": "MIMIT / Gazzetta Ufficiale"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "it-ham-70cm-430",
+      "name": "70 cm – secondario (430–434 MHz)",
+      "from": 430000000,
+      "to": 434000000,
+      "category": "amateur",
+      "scope": "italy",
+      "mode": "mixed",
+      "parent": "it-ham-70cm",
+      "notes": "Secondario: primari fisso e mobile (Difesa). 433,05-434,79 MHz condivisi con LPD/SRD e ISM (note PNRF 100A, 101).",
+      "source": {
+        "url": "https://www.gazzettaufficiale.it/eli/gu/2022/09/13/214/so/35/sg/pdf",
+        "title": "Piano nazionale di ripartizione delle frequenze tra 0 e 3000 GHz (DM 31 agosto 2022, GU n. 214 del 13-9-2022, S.O. n. 35)",
+        "authority": "MIMIT / Gazzetta Ufficiale"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "it-ham-70cm-435",
+      "name": "70 cm – primario (435–436 MHz)",
+      "from": 435000000,
+      "to": 436000000,
+      "category": "amateur",
+      "scope": "italy",
+      "mode": "mixed",
+      "parent": "it-ham-70cm",
+      "notes": "Primario sia per il radioamatore sia per il radioamatore via satellite; secondari radiolocalizzazione ed esplorazione della Terra (attiva).",
+      "source": {
+        "url": "https://www.gazzettaufficiale.it/eli/gu/2022/09/13/214/so/35/sg/pdf",
+        "title": "Piano nazionale di ripartizione delle frequenze tra 0 e 3000 GHz (DM 31 agosto 2022, GU n. 214 del 13-9-2022, S.O. n. 35)",
+        "authority": "MIMIT / Gazzetta Ufficiale"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "it-ham-70cm-436",
+      "name": "70 cm – secondario (436–438 MHz)",
+      "from": 436000000,
+      "to": 438000000,
+      "category": "amateur",
+      "scope": "italy",
+      "mode": "mixed",
+      "parent": "it-ham-70cm",
+      "notes": "Secondario: primario il servizio fisso. La tabella PNRF non elenca qui il radioamatore via satellite.",
+      "source": {
+        "url": "https://www.gazzettaufficiale.it/eli/gu/2022/09/13/214/so/35/sg/pdf",
+        "title": "Piano nazionale di ripartizione delle frequenze tra 0 e 3000 GHz (DM 31 agosto 2022, GU n. 214 del 13-9-2022, S.O. n. 35)",
+        "authority": "MIMIT / Gazzetta Ufficiale"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "it-ham-23cm",
+      "name": "Radioamatori 23 cm (1240–1298 MHz)",
+      "from": 1240000000,
+      "to": 1298000000,
+      "category": "amateur",
+      "scope": "italy",
+      "mode": "mixed",
+      "parent": "itu-uhf",
+      "notes": "Solo a titolo secondario e a tratti: 1245-1260 e 1298-1300 MHz non sono attribuiti ai radioamatori; primari radiolocalizzazione (Difesa) e radionavigazione via satellite (Galileo, GLONASS).",
+      "source": {
+        "url": "https://www.gazzettaufficiale.it/eli/gu/2022/09/13/214/so/35/sg/pdf",
+        "title": "Piano nazionale di ripartizione delle frequenze tra 0 e 3000 GHz (DM 31 agosto 2022, GU n. 214 del 13-9-2022, S.O. n. 35)",
+        "authority": "MIMIT / Gazzetta Ufficiale"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "it-ham-23cm-1240",
+      "name": "23 cm – secondario (1240–1245 MHz)",
+      "from": 1240000000,
+      "to": 1245000000,
+      "category": "amateur",
+      "scope": "italy",
+      "mode": "mixed",
+      "parent": "it-ham-23cm",
+      "notes": "Secondario rispetto a radiolocalizzazione, radionavigazione via satellite, EESS e ricerca spaziale (attive).",
+      "source": {
+        "url": "https://www.gazzettaufficiale.it/eli/gu/2022/09/13/214/so/35/sg/pdf",
+        "title": "Piano nazionale di ripartizione delle frequenze tra 0 e 3000 GHz (DM 31 agosto 2022, GU n. 214 del 13-9-2022, S.O. n. 35)",
+        "authority": "MIMIT / Gazzetta Ufficiale"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "it-ham-23cm-sat",
+      "name": "23 cm – via satellite Terra-spazio (1267–1270 MHz)",
+      "from": 1267000000,
+      "to": 1270000000,
+      "category": "amateur",
+      "scope": "italy",
+      "mode": "mixed",
+      "parent": "it-ham-23cm",
+      "notes": "Solo radioamatore via satellite (Terra-spazio), secondario (nota PNRF 117, RR 5.282, soggetto all'art. 25.11 RR). Nella riga 1260-1270 MHz il servizio di radioamatore terrestre non è elencato.",
+      "source": {
+        "url": "https://www.gazzettaufficiale.it/eli/gu/2022/09/13/214/so/35/sg/pdf",
+        "title": "Piano nazionale di ripartizione delle frequenze tra 0 e 3000 GHz (DM 31 agosto 2022, GU n. 214 del 13-9-2022, S.O. n. 35)",
+        "authority": "MIMIT / Gazzetta Ufficiale"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "it-ham-23cm-1270",
+      "name": "23 cm – secondario (1270–1298 MHz)",
+      "from": 1270000000,
+      "to": 1298000000,
+      "category": "amateur",
+      "scope": "italy",
+      "mode": "mixed",
+      "parent": "it-ham-23cm",
+      "notes": "Secondario rispetto a radiolocalizzazione (Difesa), radionavigazione via satellite (Galileo) e altri servizi primari.",
+      "source": {
+        "url": "https://www.gazzettaufficiale.it/eli/gu/2022/09/13/214/so/35/sg/pdf",
+        "title": "Piano nazionale di ripartizione delle frequenze tra 0 e 3000 GHz (DM 31 agosto 2022, GU n. 214 del 13-9-2022, S.O. n. 35)",
+        "authority": "MIMIT / Gazzetta Ufficiale"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "it-ham-13cm",
+      "name": "Radioamatori 13 cm (2300–2450 MHz)",
+      "from": 2300000000,
+      "to": 2450000000,
+      "category": "amateur",
+      "scope": "italy",
+      "mode": "mixed",
+      "parent": "itu-uhf",
+      "notes": "Secondario: primari fisso e mobile (ponti radio, IMT, SAP/SAB). 2400-2450 MHz è anche banda ISM (nota PNRF 42): va accettata l'interferenza delle applicazioni ISM e RLAN.",
+      "source": {
+        "url": "https://www.gazzettaufficiale.it/eli/gu/2022/09/13/214/so/35/sg/pdf",
+        "title": "Piano nazionale di ripartizione delle frequenze tra 0 e 3000 GHz (DM 31 agosto 2022, GU n. 214 del 13-9-2022, S.O. n. 35)",
+        "authority": "MIMIT / Gazzetta Ufficiale"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "it-ham-13cm-sat",
+      "name": "13 cm – anche via satellite (2440–2450 MHz)",
+      "from": 2440000000,
+      "to": 2450000000,
+      "category": "amateur",
+      "scope": "italy",
+      "mode": "mixed",
+      "parent": "it-ham-13cm",
+      "notes": "Secondario per il radioamatore e per il radioamatore via satellite.",
+      "source": {
+        "url": "https://www.gazzettaufficiale.it/eli/gu/2022/09/13/214/so/35/sg/pdf",
+        "title": "Piano nazionale di ripartizione delle frequenze tra 0 e 3000 GHz (DM 31 agosto 2022, GU n. 214 del 13-9-2022, S.O. n. 35)",
+        "authority": "MIMIT / Gazzetta Ufficiale"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "it-ham-6cm",
+      "name": "Radioamatori 6 cm (5650–5850 MHz)",
+      "from": 5650000000,
+      "to": 5850000000,
+      "category": "amateur",
+      "scope": "italy",
+      "mode": "mixed",
+      "parent": "itu-shf",
+      "notes": "Attribuzioni a tratti: 5670-5760 e 5770-5830 MHz non sono attribuiti ai radioamatori. Banda ISM 5725-5875 MHz (nota PNRF 42).",
+      "source": {
+        "url": "https://www.gazzettaufficiale.it/eli/gu/2022/09/13/214/so/35/sg/pdf",
+        "title": "Piano nazionale di ripartizione delle frequenze tra 0 e 3000 GHz (DM 31 agosto 2022, GU n. 214 del 13-9-2022, S.O. n. 35)",
+        "authority": "MIMIT / Gazzetta Ufficiale"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "it-ham-6cm-sat",
+      "name": "6 cm – solo via satellite (5650–5670 MHz)",
+      "from": 5650000000,
+      "to": 5670000000,
+      "category": "amateur",
+      "scope": "italy",
+      "mode": "mixed",
+      "parent": "it-ham-6cm",
+      "notes": "Solo radioamatore via satellite, secondario.",
+      "source": {
+        "url": "https://www.gazzettaufficiale.it/eli/gu/2022/09/13/214/so/35/sg/pdf",
+        "title": "Piano nazionale di ripartizione delle frequenze tra 0 e 3000 GHz (DM 31 agosto 2022, GU n. 214 del 13-9-2022, S.O. n. 35)",
+        "authority": "MIMIT / Gazzetta Ufficiale"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "it-ham-6cm-5760",
+      "name": "6 cm – primario (5760–5770 MHz)",
+      "from": 5760000000,
+      "to": 5770000000,
+      "category": "amateur",
+      "scope": "italy",
+      "mode": "mixed",
+      "parent": "it-ham-6cm",
+      "notes": "Primario (particolarità italiana), senza protezione dalle stazioni terrene FSS (Terra-spazio) di altri Paesi (nota PNRF 193).",
+      "source": {
+        "url": "https://www.gazzettaufficiale.it/eli/gu/2022/09/13/214/so/35/sg/pdf",
+        "title": "Piano nazionale di ripartizione delle frequenze tra 0 e 3000 GHz (DM 31 agosto 2022, GU n. 214 del 13-9-2022, S.O. n. 35)",
+        "authority": "MIMIT / Gazzetta Ufficiale"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "it-ham-6cm-5830",
+      "name": "6 cm – secondario (5830–5850 MHz)",
+      "from": 5830000000,
+      "to": 5850000000,
+      "category": "amateur",
+      "scope": "italy",
+      "mode": "mixed",
+      "parent": "it-ham-6cm",
+      "notes": "Secondario per il radioamatore e per il radioamatore via satellite (spazio-Terra).",
+      "source": {
+        "url": "https://www.gazzettaufficiale.it/eli/gu/2022/09/13/214/so/35/sg/pdf",
+        "title": "Piano nazionale di ripartizione delle frequenze tra 0 e 3000 GHz (DM 31 agosto 2022, GU n. 214 del 13-9-2022, S.O. n. 35)",
+        "authority": "MIMIT / Gazzetta Ufficiale"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "it-ham-3cm",
+      "name": "Radioamatori 3 cm (10,3–10,5 GHz)",
+      "from": 10300000000,
+      "to": 10500000000,
+      "category": "amateur",
+      "scope": "italy",
+      "mode": "mixed",
+      "parent": "itu-shf",
+      "notes": "Secondario: primari fisso, mobile e radiolocalizzazione. 10,0-10,3 GHz non attribuiti ai radioamatori.",
+      "source": {
+        "url": "https://www.gazzettaufficiale.it/eli/gu/2022/09/13/214/so/35/sg/pdf",
+        "title": "Piano nazionale di ripartizione delle frequenze tra 0 e 3000 GHz (DM 31 agosto 2022, GU n. 214 del 13-9-2022, S.O. n. 35)",
+        "authority": "MIMIT / Gazzetta Ufficiale"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "it-ham-3cm-sat",
+      "name": "3 cm – anche via satellite (10,45–10,5 GHz)",
+      "from": 10450000000,
+      "to": 10500000000,
+      "category": "amateur",
+      "scope": "italy",
+      "mode": "mixed",
+      "parent": "it-ham-3cm",
+      "notes": "Secondario per il radioamatore e per il radioamatore via satellite.",
+      "source": {
+        "url": "https://www.gazzettaufficiale.it/eli/gu/2022/09/13/214/so/35/sg/pdf",
+        "title": "Piano nazionale di ripartizione delle frequenze tra 0 e 3000 GHz (DM 31 agosto 2022, GU n. 214 del 13-9-2022, S.O. n. 35)",
+        "authority": "MIMIT / Gazzetta Ufficiale"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "it-ham-12mm",
+      "name": "Radioamatori 1,2 cm (24–24,05 GHz)",
+      "from": 24000000000,
+      "to": 24050000000,
+      "category": "amateur",
+      "scope": "italy",
+      "mode": "mixed",
+      "parent": "itu-shf",
+      "notes": "Primario, anche via satellite; banda ISM (nota PNRF 42). 24,05-24,25 GHz non attribuiti ai radioamatori in Italia.",
+      "source": {
+        "url": "https://www.gazzettaufficiale.it/eli/gu/2022/09/13/214/so/35/sg/pdf",
+        "title": "Piano nazionale di ripartizione delle frequenze tra 0 e 3000 GHz (DM 31 agosto 2022, GU n. 214 del 13-9-2022, S.O. n. 35)",
+        "authority": "MIMIT / Gazzetta Ufficiale"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "it-ham-6mm",
+      "name": "Radioamatori 6 mm (47–47,2 GHz)",
+      "from": 47000000000,
+      "to": 47200000000,
+      "category": "amateur",
+      "scope": "italy",
+      "mode": "mixed",
+      "parent": "itu-ehf",
+      "notes": "Primario, anche via satellite.",
+      "source": {
+        "url": "https://www.gazzettaufficiale.it/eli/gu/2022/09/13/214/so/35/sg/pdf",
+        "title": "Piano nazionale di ripartizione delle frequenze tra 0 e 3000 GHz (DM 31 agosto 2022, GU n. 214 del 13-9-2022, S.O. n. 35)",
+        "authority": "MIMIT / Gazzetta Ufficiale"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "it-ham-4mm",
+      "name": "Radioamatori 4 mm (76–81,5 GHz)",
+      "from": 76000000000,
+      "to": 81500000000,
+      "category": "amateur",
+      "scope": "italy",
+      "mode": "mixed",
+      "parent": "itu-ehf",
+      "notes": "Statuto variabile per sotto-banda; condivisa con radar automobilistici (SRR) e radioastronomia.",
+      "source": {
+        "url": "https://www.gazzettaufficiale.it/eli/gu/2022/09/13/214/so/35/sg/pdf",
+        "title": "Piano nazionale di ripartizione delle frequenze tra 0 e 3000 GHz (DM 31 agosto 2022, GU n. 214 del 13-9-2022, S.O. n. 35)",
+        "authority": "MIMIT / Gazzetta Ufficiale"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "it-ham-4mm-76",
+      "name": "4 mm – secondario (76–77,5 GHz)",
+      "from": 76000000000,
+      "to": 77500000000,
+      "category": "amateur",
+      "scope": "italy",
+      "mode": "mixed",
+      "parent": "it-ham-4mm",
+      "notes": "Secondario, anche via satellite; primari radioastronomia e radiolocalizzazione (radar veicolari 76-77 GHz).",
+      "source": {
+        "url": "https://www.gazzettaufficiale.it/eli/gu/2022/09/13/214/so/35/sg/pdf",
+        "title": "Piano nazionale di ripartizione delle frequenze tra 0 e 3000 GHz (DM 31 agosto 2022, GU n. 214 del 13-9-2022, S.O. n. 35)",
+        "authority": "MIMIT / Gazzetta Ufficiale"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "it-ham-4mm-775",
+      "name": "4 mm – primario (77,5–78 GHz)",
+      "from": 77500000000,
+      "to": 78000000000,
+      "category": "amateur",
+      "scope": "italy",
+      "mode": "mixed",
+      "parent": "it-ham-4mm",
+      "notes": "Primario, anche via satellite.",
+      "source": {
+        "url": "https://www.gazzettaufficiale.it/eli/gu/2022/09/13/214/so/35/sg/pdf",
+        "title": "Piano nazionale di ripartizione delle frequenze tra 0 e 3000 GHz (DM 31 agosto 2022, GU n. 214 del 13-9-2022, S.O. n. 35)",
+        "authority": "MIMIT / Gazzetta Ufficiale"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "it-ham-4mm-78",
+      "name": "4 mm – secondario (78–81 GHz)",
+      "from": 78000000000,
+      "to": 81000000000,
+      "category": "amateur",
+      "scope": "italy",
+      "mode": "mixed",
+      "parent": "it-ham-4mm",
+      "notes": "Secondario, anche via satellite; primari radiolocalizzazione e radioastronomia.",
+      "source": {
+        "url": "https://www.gazzettaufficiale.it/eli/gu/2022/09/13/214/so/35/sg/pdf",
+        "title": "Piano nazionale di ripartizione delle frequenze tra 0 e 3000 GHz (DM 31 agosto 2022, GU n. 214 del 13-9-2022, S.O. n. 35)",
+        "authority": "MIMIT / Gazzetta Ufficiale"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "it-ham-4mm-81",
+      "name": "4 mm – secondario (81–81,5 GHz)",
+      "from": 81000000000,
+      "to": 81500000000,
+      "category": "amateur",
+      "scope": "italy",
+      "mode": "mixed",
+      "parent": "it-ham-4mm",
+      "notes": "Secondario, anche via satellite (nota PNRF 279, RR 5.561A).",
+      "source": {
+        "url": "https://www.gazzettaufficiale.it/eli/gu/2022/09/13/214/so/35/sg/pdf",
+        "title": "Piano nazionale di ripartizione delle frequenze tra 0 e 3000 GHz (DM 31 agosto 2022, GU n. 214 del 13-9-2022, S.O. n. 35)",
+        "authority": "MIMIT / Gazzetta Ufficiale"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "it-ham-2-5mm",
+      "name": "Radioamatori 2,5 mm (122,25–123 GHz)",
+      "from": 122250000000,
+      "to": 123000000000,
+      "category": "amateur",
+      "scope": "italy",
+      "mode": "mixed",
+      "parent": "itu-ehf",
+      "notes": "Secondario; banda ISM 122-123 GHz (nota PNRF 35).",
+      "source": {
+        "url": "https://www.gazzettaufficiale.it/eli/gu/2022/09/13/214/so/35/sg/pdf",
+        "title": "Piano nazionale di ripartizione delle frequenze tra 0 e 3000 GHz (DM 31 agosto 2022, GU n. 214 del 13-9-2022, S.O. n. 35)",
+        "authority": "MIMIT / Gazzetta Ufficiale"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "it-ham-2mm",
+      "name": "Radioamatori 2 mm (134–141 GHz)",
+      "from": 134000000000,
+      "to": 141000000000,
+      "category": "amateur",
+      "scope": "italy",
+      "mode": "mixed",
+      "parent": "itu-ehf",
+      "notes": "Statuto variabile per sotto-banda.",
+      "source": {
+        "url": "https://www.gazzettaufficiale.it/eli/gu/2022/09/13/214/so/35/sg/pdf",
+        "title": "Piano nazionale di ripartizione delle frequenze tra 0 e 3000 GHz (DM 31 agosto 2022, GU n. 214 del 13-9-2022, S.O. n. 35)",
+        "authority": "MIMIT / Gazzetta Ufficiale"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "it-ham-2mm-134",
+      "name": "2 mm – primario (134–136 GHz)",
+      "from": 134000000000,
+      "to": 136000000000,
+      "category": "amateur",
+      "scope": "italy",
+      "mode": "mixed",
+      "parent": "it-ham-2mm",
+      "notes": "Primario, anche via satellite.",
+      "source": {
+        "url": "https://www.gazzettaufficiale.it/eli/gu/2022/09/13/214/so/35/sg/pdf",
+        "title": "Piano nazionale di ripartizione delle frequenze tra 0 e 3000 GHz (DM 31 agosto 2022, GU n. 214 del 13-9-2022, S.O. n. 35)",
+        "authority": "MIMIT / Gazzetta Ufficiale"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "it-ham-2mm-136",
+      "name": "2 mm – secondario (136–141 GHz)",
+      "from": 136000000000,
+      "to": 141000000000,
+      "category": "amateur",
+      "scope": "italy",
+      "mode": "mixed",
+      "parent": "it-ham-2mm",
+      "notes": "Secondario, anche via satellite; primari radioastronomia e radiolocalizzazione.",
+      "source": {
+        "url": "https://www.gazzettaufficiale.it/eli/gu/2022/09/13/214/so/35/sg/pdf",
+        "title": "Piano nazionale di ripartizione delle frequenze tra 0 e 3000 GHz (DM 31 agosto 2022, GU n. 214 del 13-9-2022, S.O. n. 35)",
+        "authority": "MIMIT / Gazzetta Ufficiale"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "it-ham-1mm",
+      "name": "Radioamatori 1,2 mm (241–250 GHz)",
+      "from": 241000000000,
+      "to": 250000000000,
+      "category": "amateur",
+      "scope": "italy",
+      "mode": "mixed",
+      "parent": "itu-ehf",
+      "notes": "Statuto variabile per sotto-banda.",
+      "source": {
+        "url": "https://www.gazzettaufficiale.it/eli/gu/2022/09/13/214/so/35/sg/pdf",
+        "title": "Piano nazionale di ripartizione delle frequenze tra 0 e 3000 GHz (DM 31 agosto 2022, GU n. 214 del 13-9-2022, S.O. n. 35)",
+        "authority": "MIMIT / Gazzetta Ufficiale"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "it-ham-1mm-241",
+      "name": "1,2 mm – secondario (241–248 GHz)",
+      "from": 241000000000,
+      "to": 248000000000,
+      "category": "amateur",
+      "scope": "italy",
+      "mode": "mixed",
+      "parent": "it-ham-1mm",
+      "notes": "Secondario, anche via satellite; primari radioastronomia e radiolocalizzazione. 244-246 GHz banda ISM.",
+      "source": {
+        "url": "https://www.gazzettaufficiale.it/eli/gu/2022/09/13/214/so/35/sg/pdf",
+        "title": "Piano nazionale di ripartizione delle frequenze tra 0 e 3000 GHz (DM 31 agosto 2022, GU n. 214 del 13-9-2022, S.O. n. 35)",
+        "authority": "MIMIT / Gazzetta Ufficiale"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "it-ham-1mm-248",
+      "name": "1,2 mm – primario (248–250 GHz)",
+      "from": 248000000000,
+      "to": 250000000000,
+      "category": "amateur",
+      "scope": "italy",
+      "mode": "mixed",
+      "parent": "it-ham-1mm",
+      "notes": "Primario, anche via satellite.",
+      "source": {
+        "url": "https://www.gazzettaufficiale.it/eli/gu/2022/09/13/214/so/35/sg/pdf",
+        "title": "Piano nazionale di ripartizione delle frequenze tra 0 e 3000 GHz (DM 31 agosto 2022, GU n. 214 del 13-9-2022, S.O. n. 35)",
+        "authority": "MIMIT / Gazzetta Ufficiale"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "uhf-406-4061-epirb",
+      "name": "406-406,1 MHz – Radiofari di soccorso via satellite",
+      "from": 406000000,
+      "to": 406100000,
+      "category": "space",
+      "scope": "world",
+      "mode": "digital",
+      "parent": "itu-uhf",
+      "notes": "Banda Mobile via satellite (Terra-spazio) riservata ai radiofari di soccorso a bassa potenza (EPIRB, ELT, PLB) del sistema Cospas-Sarsat (RR 5.266, 5.267).",
+      "source": {
+        "url": "https://www.itu.int/pub/R-REG-RR",
+        "title": "ITU Radio Regulations, Edition of 2020, Article 5 - Table of Frequency Allocations",
+        "authority": "ITU"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "mk-2m-fm-call",
+      "name": "Chiamata FM 145,500 MHz",
+      "freq": 145500000,
+      "category": "amateur",
+      "scope": "europe",
+      "parent": "ham-2m-fm-simplex",
+      "mode": "phone",
+      "notes": "Frequenza di chiamata FM simplex sui 2 m; dopo il contatto ci si sposta su un altro canale.",
+      "source": {
+        "url": "https://www.iaru-r1.org/wp-content/uploads/2026/02/VHF_Handbook_V10_03_final.pdf",
+        "title": "IARU Region 1 VHF Handbook v10.03 (febbraio 2026) – band plan 144-146 MHz e 430-440 MHz",
+        "authority": "IARU Region 1"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "mk-70cm-fm-call",
+      "name": "Chiamata FM 433,500 MHz",
+      "freq": 433500000,
+      "category": "amateur",
+      "scope": "europe",
+      "parent": "ham-70cm-fm-simplex",
+      "mode": "phone",
+      "notes": "Frequenza di chiamata FM simplex sui 70 cm.",
+      "source": {
+        "url": "https://www.iaru-r1.org/wp-content/uploads/2026/02/VHF_Handbook_V10_03_final.pdf",
+        "title": "IARU Region 1 VHF Handbook v10.03 (febbraio 2026) – band plan 144-146 MHz e 430-440 MHz",
+        "authority": "IARU Region 1"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "mk-2m-ssb-call",
+      "name": "Centro SSB 144,300 MHz",
+      "freq": 144300000,
+      "category": "amateur",
+      "scope": "europe",
+      "parent": "ham-2m-ssb",
+      "mode": "phone",
+      "notes": "Centro di attività SSB sui 2 m.",
+      "source": {
+        "url": "https://www.iaru-r1.org/wp-content/uploads/2026/02/VHF_Handbook_V10_03_final.pdf",
+        "title": "IARU Region 1 VHF Handbook v10.03 (febbraio 2026) – band plan 144-146 MHz e 430-440 MHz",
+        "authority": "IARU Region 1"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "mk-70cm-ssb-call",
+      "name": "Centro SSB 432,200 MHz",
+      "freq": 432200000,
+      "category": "amateur",
+      "scope": "europe",
+      "parent": "ham-70cm-cw",
+      "mode": "phone",
+      "notes": "Centro di attività SSB sui 70 cm.",
+      "source": {
+        "url": "https://www.iaru-r1.org/wp-content/uploads/2026/02/VHF_Handbook_V10_03_final.pdf",
+        "title": "IARU Region 1 VHF Handbook v10.03 (febbraio 2026) – band plan 144-146 MHz e 430-440 MHz",
+        "authority": "IARU Region 1"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "mk-2m-cw-call",
+      "name": "Centro CW 144,050 MHz",
+      "freq": 144050000,
+      "category": "amateur",
+      "scope": "europe",
+      "parent": "ham-2m-cw",
+      "mode": "cw",
+      "notes": "Centro di attività telegrafia sui 2 m.",
+      "source": {
+        "url": "https://www.iaru-r1.org/wp-content/uploads/2026/02/VHF_Handbook_V10_03_final.pdf",
+        "title": "IARU Region 1 VHF Handbook v10.03 (febbraio 2026) – band plan 144-146 MHz e 430-440 MHz",
+        "authority": "IARU Region 1"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "mk-2m-aprs",
+      "name": "APRS 144,800 MHz",
+      "freq": 144800000,
+      "category": "amateur",
+      "scope": "europe",
+      "parent": "ham-2m-digital",
+      "mode": "digital",
+      "notes": "Frequenza APRS europea (Automatic Packet Reporting System, AX.25 1200 bd).",
+      "source": {
+        "url": "https://www.iaru-r1.org/wp-content/uploads/2026/02/VHF_Handbook_V10_03_final.pdf",
+        "title": "IARU Region 1 VHF Handbook v10.03 (febbraio 2026) – band plan 144-146 MHz e 430-440 MHz",
+        "authority": "IARU Region 1"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "mk-iss-voice-down",
+      "name": "ISS downlink voce/SSTV 145,800 MHz",
+      "freq": 145800000,
+      "category": "amateur",
+      "scope": "world",
+      "parent": "vhf-144-146-amateur-2m",
+      "mode": "phone",
+      "notes": "Downlink FM dell'ISS in tutto il mondo per QSO in fonia e per gli eventi SSTV.",
+      "source": {
+        "url": "https://www.ariss.org/contact-the-iss.html",
+        "title": "ARISS – Contact the ISS: Frequencies in Use",
+        "authority": "ARISS"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "mk-iss-voice-up-r1",
+      "name": "ISS uplink voce Regione 1 145,200 MHz",
+      "freq": 145200000,
+      "category": "amateur",
+      "scope": "europe",
+      "parent": "ham-2m-space-145200",
+      "mode": "phone",
+      "notes": "Uplink FM verso l'ISS per la Regione 1 (Europa, Russia, Africa); le Regioni 2 e 3 usano 144,490 MHz.",
+      "source": {
+        "url": "https://www.ariss.org/contact-the-iss.html",
+        "title": "ARISS – Contact the ISS: Frequencies in Use",
+        "authority": "ARISS"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "mk-iss-aprs",
+      "name": "ISS packet/APRS 145,825 MHz",
+      "freq": 145825000,
+      "category": "amateur",
+      "scope": "world",
+      "parent": "vhf-144-146-amateur-2m",
+      "mode": "digital",
+      "notes": "Digipeater APRS/packet dell'ISS (uplink e downlink), alias ARISS.",
+      "source": {
+        "url": "https://www.ariss.org/contact-the-iss.html",
+        "title": "ARISS – Contact the ISS: Frequencies in Use",
+        "authority": "ARISS"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "mk-iss-rpt-down",
+      "name": "ISS ripetitore downlink 437,800 MHz",
+      "freq": 437800000,
+      "category": "amateur",
+      "scope": "world",
+      "parent": "itu-uhf",
+      "mode": "phone",
+      "notes": "Downlink del ripetitore FM V/U dell'ISS (uplink 145,990 MHz con tono 67 Hz).",
+      "source": {
+        "url": "https://www.ariss.org/contact-the-iss.html",
+        "title": "ARISS – Contact the ISS: Frequencies in Use",
+        "authority": "ARISS"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "mk-ft8-160m",
+      "name": "FT8 160m 1,840 MHz",
+      "freq": 1840000,
+      "category": "amateur",
+      "scope": "europe",
+      "parent": "ham-160m-digital-digi",
+      "mode": "digital",
+      "notes": "Frequenza di sintonia (dial, USB) FT8 predefinita in WSJT-X; i segnali occupano i 3 kHz sopra.",
+      "source": {
+        "url": "https://wsjt.sourceforge.io/wsjtx-doc/wsjtx-main-2.6.1.html",
+        "title": "WSJT-X User Guide – tabella Working Frequencies predefinita",
+        "authority": "WSJT-X (K1JT)"
+      },
+      "sourceTier": "secondary"
+    },
+    {
+      "id": "mk-ft8-80m",
+      "name": "FT8 80m 3,573 MHz",
+      "freq": 3573000,
+      "category": "amateur",
+      "scope": "europe",
+      "parent": "ham-80m-digital-200",
+      "mode": "digital",
+      "notes": "Frequenza di sintonia (dial, USB) FT8 predefinita in WSJT-X; i segnali occupano i 3 kHz sopra.",
+      "source": {
+        "url": "https://wsjt.sourceforge.io/wsjtx-doc/wsjtx-main-2.6.1.html",
+        "title": "WSJT-X User Guide – tabella Working Frequencies predefinita",
+        "authority": "WSJT-X (K1JT)"
+      },
+      "sourceTier": "secondary"
+    },
+    {
+      "id": "mk-ft8-40m",
+      "name": "FT8 40m 7,074 MHz",
+      "freq": 7074000,
+      "category": "amateur",
+      "scope": "europe",
+      "parent": "ham-40m-phone-contest1",
+      "mode": "digital",
+      "notes": "Frequenza di sintonia (dial, USB) FT8 predefinita in WSJT-X; i segnali occupano i 3 kHz sopra.",
+      "source": {
+        "url": "https://wsjt.sourceforge.io/wsjtx-doc/wsjtx-main-2.6.1.html",
+        "title": "WSJT-X User Guide – tabella Working Frequencies predefinita",
+        "authority": "WSJT-X (K1JT)"
+      },
+      "sourceTier": "secondary"
+    },
+    {
+      "id": "mk-ft8-30m",
+      "name": "FT8 30m 10,136 MHz",
+      "freq": 10136000,
+      "category": "amateur",
+      "scope": "europe",
+      "parent": "ham-30m-digital",
+      "mode": "digital",
+      "notes": "Frequenza di sintonia (dial, USB) FT8 predefinita in WSJT-X; i segnali occupano i 3 kHz sopra.",
+      "source": {
+        "url": "https://wsjt.sourceforge.io/wsjtx-doc/wsjtx-main-2.6.1.html",
+        "title": "WSJT-X User Guide – tabella Working Frequencies predefinita",
+        "authority": "WSJT-X (K1JT)"
+      },
+      "sourceTier": "secondary"
+    },
+    {
+      "id": "mk-ft8-20m",
+      "name": "FT8 20m 14,074 MHz",
+      "freq": 14074000,
+      "category": "amateur",
+      "scope": "europe",
+      "parent": "ham-20m-digital-500a",
+      "mode": "digital",
+      "notes": "Frequenza di sintonia (dial, USB) FT8 predefinita in WSJT-X; i segnali occupano i 3 kHz sopra.",
+      "source": {
+        "url": "https://wsjt.sourceforge.io/wsjtx-doc/wsjtx-main-2.6.1.html",
+        "title": "WSJT-X User Guide – tabella Working Frequencies predefinita",
+        "authority": "WSJT-X (K1JT)"
+      },
+      "sourceTier": "secondary"
+    },
+    {
+      "id": "mk-ft8-17m",
+      "name": "FT8 17m 18,100 MHz",
+      "freq": 18100000,
+      "category": "amateur",
+      "scope": "europe",
+      "parent": "ham-17m-digital-500a",
+      "mode": "digital",
+      "notes": "Frequenza di sintonia (dial, USB) FT8 predefinita in WSJT-X; i segnali occupano i 3 kHz sopra.",
+      "source": {
+        "url": "https://wsjt.sourceforge.io/wsjtx-doc/wsjtx-main-2.6.1.html",
+        "title": "WSJT-X User Guide – tabella Working Frequencies predefinita",
+        "authority": "WSJT-X (K1JT)"
+      },
+      "sourceTier": "secondary"
+    },
+    {
+      "id": "mk-ft8-15m",
+      "name": "FT8 15m 21,074 MHz",
+      "freq": 21074000,
+      "category": "amateur",
+      "scope": "europe",
+      "parent": "ham-15m-digital-500a",
+      "mode": "digital",
+      "notes": "Frequenza di sintonia (dial, USB) FT8 predefinita in WSJT-X; i segnali occupano i 3 kHz sopra.",
+      "source": {
+        "url": "https://wsjt.sourceforge.io/wsjtx-doc/wsjtx-main-2.6.1.html",
+        "title": "WSJT-X User Guide – tabella Working Frequencies predefinita",
+        "authority": "WSJT-X (K1JT)"
+      },
+      "sourceTier": "secondary"
+    },
+    {
+      "id": "mk-ft8-12m",
+      "name": "FT8 12m 24,915 MHz",
+      "freq": 24915000,
+      "category": "amateur",
+      "scope": "europe",
+      "parent": "ham-12m-digital-500a",
+      "mode": "digital",
+      "notes": "Frequenza di sintonia (dial, USB) FT8 predefinita in WSJT-X; i segnali occupano i 3 kHz sopra.",
+      "source": {
+        "url": "https://wsjt.sourceforge.io/wsjtx-doc/wsjtx-main-2.6.1.html",
+        "title": "WSJT-X User Guide – tabella Working Frequencies predefinita",
+        "authority": "WSJT-X (K1JT)"
+      },
+      "sourceTier": "secondary"
+    },
+    {
+      "id": "mk-ft8-10m",
+      "name": "FT8 10m 28,074 MHz",
+      "freq": 28074000,
+      "category": "amateur",
+      "scope": "europe",
+      "parent": "ham-10m-digital-500a",
+      "mode": "digital",
+      "notes": "Frequenza di sintonia (dial, USB) FT8 predefinita in WSJT-X; i segnali occupano i 3 kHz sopra.",
+      "source": {
+        "url": "https://wsjt.sourceforge.io/wsjtx-doc/wsjtx-main-2.6.1.html",
+        "title": "WSJT-X User Guide – tabella Working Frequencies predefinita",
+        "authority": "WSJT-X (K1JT)"
+      },
+      "sourceTier": "secondary"
+    },
+    {
+      "id": "mk-ft8-6m",
+      "name": "FT8 6m 50,313 MHz",
+      "freq": 50313000,
+      "category": "amateur",
+      "scope": "europe",
+      "parent": "ham-6m-ssb",
+      "mode": "digital",
+      "notes": "Frequenza di sintonia (dial, USB) FT8 predefinita in WSJT-X; i segnali occupano i 3 kHz sopra.",
+      "source": {
+        "url": "https://wsjt.sourceforge.io/wsjtx-doc/wsjtx-main-2.6.1.html",
+        "title": "WSJT-X User Guide – tabella Working Frequencies predefinita",
+        "authority": "WSJT-X (K1JT)"
+      },
+      "sourceTier": "secondary"
+    },
+    {
+      "id": "mk-ft8-2m",
+      "name": "FT8 2m 144,174 MHz",
+      "freq": 144174000,
+      "category": "amateur",
+      "scope": "europe",
+      "parent": "ham-2m-ssb",
+      "mode": "digital",
+      "notes": "Frequenza di sintonia (dial, USB) FT8 predefinita in WSJT-X; i segnali occupano i 3 kHz sopra.",
+      "source": {
+        "url": "https://wsjt.sourceforge.io/wsjtx-doc/wsjtx-main-2.6.1.html",
+        "title": "WSJT-X User Guide – tabella Working Frequencies predefinita",
+        "authority": "WSJT-X (K1JT)"
+      },
+      "sourceTier": "secondary"
+    },
+    {
+      "id": "mk-wspr-40m",
+      "name": "WSPR 40m 7,0386 MHz",
+      "freq": 7038600,
+      "category": "amateur",
+      "scope": "europe",
+      "parent": "ham-40m-cw",
+      "mode": "digital",
+      "notes": "Frequenza di sintonia (dial, USB) WSPR; i segnali cadono in una finestra di 200 Hz attorno a +1500 Hz.",
+      "source": {
+        "url": "https://www.wsprnet.org/drupal/node/218",
+        "title": "WSPRnet – WSPR frequencies",
+        "authority": "WSPRnet"
+      },
+      "sourceTier": "secondary"
+    },
+    {
+      "id": "mk-wspr-30m",
+      "name": "WSPR 30m 10,1387 MHz",
+      "freq": 10138700,
+      "category": "amateur",
+      "scope": "europe",
+      "parent": "ham-30m-digital",
+      "mode": "digital",
+      "notes": "Frequenza di sintonia (dial, USB) WSPR; i segnali cadono in una finestra di 200 Hz attorno a +1500 Hz.",
+      "source": {
+        "url": "https://www.wsprnet.org/drupal/node/218",
+        "title": "WSPRnet – WSPR frequencies",
+        "authority": "WSPRnet"
+      },
+      "sourceTier": "secondary"
+    },
+    {
+      "id": "mk-wspr-20m",
+      "name": "WSPR 20m 14,0956 MHz",
+      "freq": 14095600,
+      "category": "amateur",
+      "scope": "europe",
+      "parent": "ham-20m-digital-500b",
+      "mode": "digital",
+      "notes": "Frequenza di sintonia (dial, USB) WSPR; i segnali cadono in una finestra di 200 Hz attorno a +1500 Hz.",
+      "source": {
+        "url": "https://www.wsprnet.org/drupal/node/218",
+        "title": "WSPRnet – WSPR frequencies",
+        "authority": "WSPRnet"
+      },
+      "sourceTier": "secondary"
+    },
+    {
+      "id": "mk-qrp-cw-80m",
+      "name": "QRP CW 80m 3560 kHz",
+      "freq": 3560000,
+      "category": "amateur",
+      "scope": "europe",
+      "parent": "ham-80m-cw-qrp",
+      "mode": "cw",
+      "notes": "Centro di attività CW QRP (bassa potenza, ≤5 W).",
+      "source": {
+        "url": "https://www.iaru-r1.org/wp-content/uploads/2021/06/hf_r1_bandplan.pdf",
+        "title": "IARU Region 1 HF Band Plan (Novi Sad, 16 ottobre 2020)",
+        "authority": "IARU Region 1"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "mk-qrp-cw-40m",
+      "name": "QRP CW 40m 7030 kHz",
+      "freq": 7030000,
+      "category": "amateur",
+      "scope": "europe",
+      "parent": "ham-40m-cw",
+      "mode": "cw",
+      "notes": "Centro di attività CW QRP (bassa potenza, ≤5 W).",
+      "source": {
+        "url": "https://www.iaru-r1.org/wp-content/uploads/2021/06/hf_r1_bandplan.pdf",
+        "title": "IARU Region 1 HF Band Plan (Novi Sad, 16 ottobre 2020)",
+        "authority": "IARU Region 1"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "mk-qrp-cw-30m",
+      "name": "QRP CW 30m 10116 kHz",
+      "freq": 10116000,
+      "category": "amateur",
+      "scope": "europe",
+      "parent": "ham-30m-cw",
+      "mode": "cw",
+      "notes": "Centro di attività CW QRP (bassa potenza, ≤5 W).",
+      "source": {
+        "url": "https://www.iaru-r1.org/wp-content/uploads/2021/06/hf_r1_bandplan.pdf",
+        "title": "IARU Region 1 HF Band Plan (Novi Sad, 16 ottobre 2020)",
+        "authority": "IARU Region 1"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "mk-qrp-cw-20m",
+      "name": "QRP CW 20m 14060 kHz",
+      "freq": 14060000,
+      "category": "amateur",
+      "scope": "europe",
+      "parent": "ham-20m-cw-qrp",
+      "mode": "cw",
+      "notes": "Centro di attività CW QRP (bassa potenza, ≤5 W).",
+      "source": {
+        "url": "https://www.iaru-r1.org/wp-content/uploads/2021/06/hf_r1_bandplan.pdf",
+        "title": "IARU Region 1 HF Band Plan (Novi Sad, 16 ottobre 2020)",
+        "authority": "IARU Region 1"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "mk-qrp-cw-17m",
+      "name": "QRP CW 17m 18086 kHz",
+      "freq": 18086000,
+      "category": "amateur",
+      "scope": "europe",
+      "parent": "ham-17m-cw",
+      "mode": "cw",
+      "notes": "Centro di attività CW QRP (bassa potenza, ≤5 W).",
+      "source": {
+        "url": "https://www.iaru-r1.org/wp-content/uploads/2021/06/hf_r1_bandplan.pdf",
+        "title": "IARU Region 1 HF Band Plan (Novi Sad, 16 ottobre 2020)",
+        "authority": "IARU Region 1"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "mk-qrp-cw-15m",
+      "name": "QRP CW 15m 21060 kHz",
+      "freq": 21060000,
+      "category": "amateur",
+      "scope": "europe",
+      "parent": "ham-15m-cw",
+      "mode": "cw",
+      "notes": "Centro di attività CW QRP (bassa potenza, ≤5 W).",
+      "source": {
+        "url": "https://www.iaru-r1.org/wp-content/uploads/2021/06/hf_r1_bandplan.pdf",
+        "title": "IARU Region 1 HF Band Plan (Novi Sad, 16 ottobre 2020)",
+        "authority": "IARU Region 1"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "mk-qrp-cw-12m",
+      "name": "QRP CW 12m 24906 kHz",
+      "freq": 24906000,
+      "category": "amateur",
+      "scope": "europe",
+      "parent": "ham-12m-cw",
+      "mode": "cw",
+      "notes": "Centro di attività CW QRP (bassa potenza, ≤5 W).",
+      "source": {
+        "url": "https://www.iaru-r1.org/wp-content/uploads/2021/06/hf_r1_bandplan.pdf",
+        "title": "IARU Region 1 HF Band Plan (Novi Sad, 16 ottobre 2020)",
+        "authority": "IARU Region 1"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "mk-qrp-cw-10m",
+      "name": "QRP CW 10m 28060 kHz",
+      "freq": 28060000,
+      "category": "amateur",
+      "scope": "europe",
+      "parent": "ham-10m-cw",
+      "mode": "cw",
+      "notes": "Centro di attività CW QRP (bassa potenza, ≤5 W).",
+      "source": {
+        "url": "https://www.iaru-r1.org/wp-content/uploads/2021/06/hf_r1_bandplan.pdf",
+        "title": "IARU Region 1 HF Band Plan (Novi Sad, 16 ottobre 2020)",
+        "authority": "IARU Region 1"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "mk-qrp-ssb-80m",
+      "name": "QRP SSB 80m 3690 kHz",
+      "freq": 3690000,
+      "category": "amateur",
+      "scope": "europe",
+      "parent": "ham-80m-phone-qrp",
+      "mode": "phone",
+      "notes": "Centro di attività SSB QRP (bassa potenza).",
+      "source": {
+        "url": "https://www.iaru-r1.org/wp-content/uploads/2021/06/hf_r1_bandplan.pdf",
+        "title": "IARU Region 1 HF Band Plan (Novi Sad, 16 ottobre 2020)",
+        "authority": "IARU Region 1"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "mk-qrp-ssb-40m",
+      "name": "QRP SSB 40m 7090 kHz",
+      "freq": 7090000,
+      "category": "amateur",
+      "scope": "europe",
+      "parent": "ham-40m-phone-contest1",
+      "mode": "phone",
+      "notes": "Centro di attività SSB QRP (bassa potenza).",
+      "source": {
+        "url": "https://www.iaru-r1.org/wp-content/uploads/2021/06/hf_r1_bandplan.pdf",
+        "title": "IARU Region 1 HF Band Plan (Novi Sad, 16 ottobre 2020)",
+        "authority": "IARU Region 1"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "mk-qrp-ssb-20m",
+      "name": "QRP SSB 20m 14285 kHz",
+      "freq": 14285000,
+      "category": "amateur",
+      "scope": "europe",
+      "parent": "ham-20m-phone-contest",
+      "mode": "phone",
+      "notes": "Centro di attività SSB QRP (bassa potenza).",
+      "source": {
+        "url": "https://www.iaru-r1.org/wp-content/uploads/2021/06/hf_r1_bandplan.pdf",
+        "title": "IARU Region 1 HF Band Plan (Novi Sad, 16 ottobre 2020)",
+        "authority": "IARU Region 1"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "mk-qrp-ssb-15m",
+      "name": "QRP SSB 15m 21285 kHz",
+      "freq": 21285000,
+      "category": "amateur",
+      "scope": "europe",
+      "parent": "ham-15m-phone",
+      "mode": "phone",
+      "notes": "Centro di attività SSB QRP (bassa potenza).",
+      "source": {
+        "url": "https://www.iaru-r1.org/wp-content/uploads/2021/06/hf_r1_bandplan.pdf",
+        "title": "IARU Region 1 HF Band Plan (Novi Sad, 16 ottobre 2020)",
+        "authority": "IARU Region 1"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "mk-qrp-ssb-10m",
+      "name": "QRP SSB 10m 28360 kHz",
+      "freq": 28360000,
+      "category": "amateur",
+      "scope": "europe",
+      "parent": "ham-10m-phone",
+      "mode": "phone",
+      "notes": "Centro di attività SSB QRP (bassa potenza).",
+      "source": {
+        "url": "https://www.iaru-r1.org/wp-content/uploads/2021/06/hf_r1_bandplan.pdf",
+        "title": "IARU Region 1 HF Band Plan (Novi Sad, 16 ottobre 2020)",
+        "authority": "IARU Region 1"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "mk-ibp-20m",
+      "name": "Beacon IBP 20m 14100 kHz",
+      "freq": 14100000,
+      "category": "amateur",
+      "scope": "world",
+      "parent": "hf-amateur-20m",
+      "mode": "cw",
+      "notes": "International Beacon Project: 18 beacon nel mondo trasmettono a turno ogni 10 s (nominativo + 4 livelli di potenza da 100 W a 0,1 W), utile per valutare la propagazione.",
+      "source": {
+        "url": "https://www.ncdxf.org/beacon/",
+        "title": "NCDXF/IARU International Beacon Project",
+        "authority": "NCDXF / IARU"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "mk-ibp-17m",
+      "name": "Beacon IBP 17m 18110 kHz",
+      "freq": 18110000,
+      "category": "amateur",
+      "scope": "world",
+      "parent": "hf-amateur-17m",
+      "mode": "cw",
+      "notes": "International Beacon Project: 18 beacon nel mondo trasmettono a turno ogni 10 s (nominativo + 4 livelli di potenza da 100 W a 0,1 W), utile per valutare la propagazione.",
+      "source": {
+        "url": "https://www.ncdxf.org/beacon/",
+        "title": "NCDXF/IARU International Beacon Project",
+        "authority": "NCDXF / IARU"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "mk-ibp-15m",
+      "name": "Beacon IBP 15m 21150 kHz",
+      "freq": 21150000,
+      "category": "amateur",
+      "scope": "world",
+      "parent": "hf-amateur-15m",
+      "mode": "cw",
+      "notes": "International Beacon Project: 18 beacon nel mondo trasmettono a turno ogni 10 s (nominativo + 4 livelli di potenza da 100 W a 0,1 W), utile per valutare la propagazione.",
+      "source": {
+        "url": "https://www.ncdxf.org/beacon/",
+        "title": "NCDXF/IARU International Beacon Project",
+        "authority": "NCDXF / IARU"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "mk-ibp-12m",
+      "name": "Beacon IBP 12m 24930 kHz",
+      "freq": 24930000,
+      "category": "amateur",
+      "scope": "world",
+      "parent": "hf-amateur-12m",
+      "mode": "cw",
+      "notes": "International Beacon Project: 18 beacon nel mondo trasmettono a turno ogni 10 s (nominativo + 4 livelli di potenza da 100 W a 0,1 W), utile per valutare la propagazione.",
+      "source": {
+        "url": "https://www.ncdxf.org/beacon/",
+        "title": "NCDXF/IARU International Beacon Project",
+        "authority": "NCDXF / IARU"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "mk-ibp-10m",
+      "name": "Beacon IBP 10m 28200 kHz",
+      "freq": 28200000,
+      "category": "amateur",
+      "scope": "world",
+      "parent": "hf-amateur-10m",
+      "mode": "cw",
+      "notes": "International Beacon Project: 18 beacon nel mondo trasmettono a turno ogni 10 s (nominativo + 4 livelli di potenza da 100 W a 0,1 W), utile per valutare la propagazione.",
+      "source": {
+        "url": "https://www.ncdxf.org/beacon/",
+        "title": "NCDXF/IARU International Beacon Project",
+        "authority": "NCDXF / IARU"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "mk-10m-fm-call",
+      "name": "Chiamata FM 10 m 29,600 MHz",
+      "freq": 29600000,
+      "category": "amateur",
+      "scope": "europe",
+      "parent": "ham-10m-fm-calling",
+      "mode": "phone",
+      "notes": "Canale di chiamata FM sui 10 m.",
+      "source": {
+        "url": "https://www.iaru-r1.org/wp-content/uploads/2021/06/hf_r1_bandplan.pdf",
+        "title": "IARU Region 1 HF Band Plan (Novi Sad, 16 ottobre 2020)",
+        "authority": "IARU Region 1"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "mk-ssr-1030",
+      "name": "Interrogazione SSR/Mode S 1030 MHz",
+      "freq": 1030000000,
+      "category": "aeronautical",
+      "scope": "world",
+      "parent": "itu-uhf-arns-960-1215",
+      "mode": "digital",
+      "notes": "Frequenza di interrogazione dei radar secondari (SSR modi A/C/S) e del TCAS.",
+      "source": {
+        "url": "https://www.icao.int/sites/default/files/FSMP/Doc.9718-Vol-I-2nd-Edition-2018_corr1.pdf",
+        "title": "ICAO Doc 9718 - Handbook on Radio Frequency Spectrum Requirements for Civil Aviation",
+        "authority": "ICAO"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "mk-adsb-1090",
+      "name": "ADS-B / Mode S 1090 MHz",
+      "freq": 1090000000,
+      "category": "aeronautical",
+      "scope": "world",
+      "parent": "itu-uhf-arns-960-1215",
+      "mode": "digital",
+      "notes": "Risposte dei transponder SSR/Mode S e squitter ADS-B 1090ES: ricevibile con un semplice RTL-SDR.",
+      "source": {
+        "url": "https://www.icao.int/sites/default/files/FSMP/Doc.9718-Vol-I-2nd-Edition-2018_corr1.pdf",
+        "title": "ICAO Doc 9718 - Handbook on Radio Frequency Spectrum Requirements for Civil Aviation",
+        "authority": "ICAO"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "mk-air-121-5",
+      "name": "Emergenza aeronautica 121,5 MHz",
+      "freq": 121500000,
+      "category": "aeronautical",
+      "scope": "world",
+      "parent": "vhf-117.975-137-aeronautical-mobile-r",
+      "mode": "phone",
+      "notes": "Frequenza internazionale di emergenza aeronautica in fonia (AM), usata anche per l'homing degli ELT (RR App. 15).",
+      "source": {
+        "url": "https://www.icao.int/sites/default/files/FSMP/Doc.9718-Vol-I-2nd-Edition-2018_corr1.pdf",
+        "title": "ICAO Doc 9718 - Handbook on Radio Frequency Spectrum Requirements for Civil Aviation",
+        "authority": "ICAO"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "mk-mil-243",
+      "name": "Emergenza militare 243,0 MHz",
+      "freq": 243000000,
+      "category": "aeronautical",
+      "scope": "world",
+      "parent": "vhf-230-267-mobile-fixed",
+      "mode": "phone",
+      "notes": "Frequenza di emergenza aeronautica UHF (seconda armonica di 121,5 MHz), usata da aerei militari e mezzi di sopravvivenza (RR App. 15).",
+      "source": {
+        "url": "https://www.itu.int/pub/R-REG-RR",
+        "title": "ITU Radio Regulations, Edition of 2020, Article 5 - Table of Frequency Allocations",
+        "authority": "ITU"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "mk-marine-ch16",
+      "name": "VHF marino canale 16 (156,800 MHz)",
+      "freq": 156800000,
+      "category": "maritime",
+      "scope": "world",
+      "parent": "vhf-maritime-156-174",
+      "mode": "phone",
+      "notes": "Canale internazionale di soccorso, sicurezza e chiamata in fonia FM.",
+      "source": {
+        "url": "https://www.navcen.uscg.gov/international-vhf-marine-radio-channels-freq",
+        "title": "International VHF Marine Radio Channels and Frequencies (ITU RR Appendice 18) - USCG Navigation Center",
+        "authority": "USCG / IMO"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "mk-marine-ch70",
+      "name": "VHF marino canale 70 DSC (156,525 MHz)",
+      "freq": 156525000,
+      "category": "maritime",
+      "scope": "world",
+      "parent": "vhf-maritime-156-174",
+      "mode": "digital",
+      "notes": "Canale riservato alla chiamata selettiva digitale (DSC) GMDSS; vietata la fonia.",
+      "source": {
+        "url": "https://www.navcen.uscg.gov/international-vhf-marine-radio-channels-freq",
+        "title": "International VHF Marine Radio Channels and Frequencies (ITU RR Appendice 18) - USCG Navigation Center",
+        "authority": "USCG / IMO"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "mk-ais1",
+      "name": "AIS 1 (161,975 MHz)",
+      "freq": 161975000,
+      "category": "maritime",
+      "scope": "world",
+      "parent": "sat-ais-space",
+      "mode": "digital",
+      "notes": "Canale AIS 1 (87B): identificazione automatica delle navi, ricevuto anche da satellite.",
+      "source": {
+        "url": "https://www.itu.int/rec/R-REC-M.1371",
+        "title": "Recommendation ITU-R M.1371 – Technical characteristics for an automatic identification system (AIS)",
+        "authority": "ITU-R"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "mk-ais2",
+      "name": "AIS 2 (162,025 MHz)",
+      "freq": 162025000,
+      "category": "maritime",
+      "scope": "world",
+      "parent": "sat-ais-space",
+      "mode": "digital",
+      "notes": "Canale AIS 2 (88B): identificazione automatica delle navi, ricevuto anche da satellite.",
+      "source": {
+        "url": "https://www.itu.int/rec/R-REC-M.1371",
+        "title": "Recommendation ITU-R M.1371 – Technical characteristics for an automatic identification system (AIS)",
+        "authority": "ITU-R"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "mk-nfc-13-56",
+      "name": "NFC / RFID 13,56 MHz",
+      "freq": 13560000,
+      "category": "industrial",
+      "scope": "world",
+      "parent": "hf-13360-13570-fixed",
+      "mode": "digital",
+      "notes": "Centro della banda ISM 13,553-13,567 MHz (RR 5.150): usata da NFC, carte contactless e RFID HF.",
+      "source": {
+        "url": "https://www.itu.int/pub/R-REG-RR",
+        "title": "ITU Radio Regulations, Edition of 2020, Article 5 - Table of Frequency Allocations",
+        "authority": "ITU"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "mk-meshtastic-eu",
+      "name": "Meshtastic EU LongFast 869,525 MHz",
+      "freq": 869525000,
+      "category": "free",
+      "scope": "europe",
+      "parent": "ecc-srd-863-870",
+      "mode": "digital",
+      "notes": "Frequenza predefinita di Meshtastic (regione EU_868, preset LongFast, slot 1) nella sotto-banda SRD 869,4-869,65 MHz (fino a 500 mW e.r.p., duty cycle 10%).",
+      "source": {
+        "url": "https://meshtastic.org/docs/overview/radio-settings/",
+        "title": "Meshtastic – Radio Settings (regione EU_868, preset LongFast)",
+        "authority": "Meshtastic"
+      },
+      "sourceTier": "secondary"
+    },
+    {
+      "id": "mk-msf-60k",
+      "name": "MSF 60 kHz (segnale orario UK)",
+      "freq": 60000,
+      "category": "scientific",
+      "scope": "world",
+      "parent": "itu-vlf-fixed-mar-2005-70",
+      "mode": "digital",
+      "notes": "Segnale orario e di frequenza campione britannico da Anthorn (Cumbria), gestito per NPL.",
+      "source": {
+        "url": "https://www.npl.co.uk/msf-signal",
+        "title": "MSF radio time signal – National Physical Laboratory",
+        "authority": "NPL (UK)"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "mk-wwv-10m",
+      "name": "WWV 10 MHz",
+      "freq": 10000000,
+      "category": "scientific",
+      "scope": "world",
+      "parent": "hf-sfts-10mhz",
+      "mode": "mixed",
+      "notes": "Stazione di segnali orari e frequenza campione del NIST (Fort Collins, USA); spesso ricevibile in Europa.",
+      "source": {
+        "url": "https://www.nist.gov/pml/time-and-frequency-division/time-distribution/radio-station-wwv",
+        "title": "Radio Station WWV - NIST",
+        "authority": "NIST"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "mk-rwm-9996",
+      "name": "RWM 9,996 MHz",
+      "freq": 9996000,
+      "category": "scientific",
+      "scope": "world",
+      "parent": "hf-sfts-10mhz",
+      "mode": "cw",
+      "notes": "Stazione russa di segnali orari e frequenza campione (Mosca), in CW; trasmette anche su 4,996 e 14,996 MHz.",
+      "source": {
+        "url": "https://en.wikipedia.org/wiki/RWM",
+        "title": "RWM – Wikipedia",
+        "authority": "Wikipedia"
+      },
+      "sourceTier": "secondary"
+    },
+    {
+      "id": "mk-meteor-lrpt-1379",
+      "name": "Meteor-M LRPT 137,9 MHz",
+      "freq": 137900000,
+      "category": "meteorology",
+      "scope": "world",
+      "parent": "vhf-137-138-metsat-apt",
+      "mode": "digital",
+      "notes": "Downlink LRPT digitale dei satelliti meteo russi Meteor-M (QPSK, 72-80 kbit/s), frequenza principale.",
+      "source": {
+        "url": "https://space.oscar.wmo.int/satellites/view/meteor_m_n2_4",
+        "title": "WMO OSCAR – Satellite Meteor-M N2-4 (LRPT 137,1 / 137,9 MHz)",
+        "authority": "WMO (World Meteorological Organization)"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "mk-meteor-lrpt-1371",
+      "name": "Meteor-M LRPT 137,1 MHz",
+      "freq": 137100000,
+      "category": "meteorology",
+      "scope": "world",
+      "parent": "vhf-137-138-metsat-apt",
+      "mode": "digital",
+      "notes": "Frequenza LRPT alternativa dei Meteor-M.",
+      "source": {
+        "url": "https://space.oscar.wmo.int/satellites/view/meteor_m_n2_4",
+        "title": "WMO OSCAR – Satellite Meteor-M N2-4 (LRPT 137,1 / 137,9 MHz)",
+        "authority": "WMO (World Meteorological Organization)"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "mk-gps-l1",
+      "name": "GPS L1 1575,42 MHz",
+      "freq": 1575420000,
+      "category": "navigation",
+      "scope": "world",
+      "parent": "gps-l1",
+      "mode": "digital",
+      "notes": "Portante del segnale civile GPS L1 C/A (154 × 10,23 MHz).",
+      "source": {
+        "url": "https://www.gps.gov/technical/icwg/IS-GPS-200N.pdf",
+        "title": "IS-GPS-200N – GPS Interface Specification",
+        "authority": "GPS.gov / US Space Force"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "mk-galileo-e1",
+      "name": "Galileo E1 1575,42 MHz",
+      "freq": 1575420000,
+      "category": "navigation",
+      "scope": "world",
+      "parent": "galileo-e1",
+      "mode": "digital",
+      "notes": "Portante Galileo E1 (Open Service), coincidente con GPS L1 per l'interoperabilità.",
+      "source": {
+        "url": "https://gssc.esa.int/navipedia/index.php/Galileo_Signal_Plan",
+        "title": "Galileo Signal Plan – Navipedia (ESA GNSS Service Centre)",
+        "authority": "ESA / European GNSS Service Centre"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "mk-glonass-l1",
+      "name": "GLONASS L1 1602 MHz",
+      "freq": 1602000000,
+      "category": "navigation",
+      "scope": "world",
+      "parent": "glonass-l1-fdma",
+      "mode": "digital",
+      "notes": "Frequenza centrale (canale k=0) del GLONASS L1 FDMA; i canali sono spaziati di 562,5 kHz.",
+      "source": {
+        "url": "https://gssc.esa.int/navipedia/index.php/GLONASS_Signal_Plan",
+        "title": "GLONASS Signal Plan – Navipedia (ESA GNSS Service Centre)",
+        "authority": "ESA / European GNSS Service Centre"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "mk-cospas-406025",
+      "name": "Cospas-Sarsat 406,025 MHz",
+      "freq": 406025000,
+      "category": "space",
+      "scope": "world",
+      "parent": "uhf-406-4061-epirb",
+      "mode": "digital",
+      "notes": "Canale dei radiofari di soccorso 406 MHz (EPIRB, ELT, PLB). Canali attivi: 406,025 / 406,028 / 406,031 / 406,037 / 406,040 MHz (406,076 dal 2025).",
+      "source": {
+        "url": "https://www.cospas-sarsat.int/images/stories/SystemDocs/Current/T007-NOV-29-2022.pdf",
+        "title": "Cospas-Sarsat C/S T.007 – 406 MHz Distress Beacon Type Approval Standard (canali C/S T.012)",
+        "authority": "Cospas-Sarsat"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "mk-cospas-406040",
+      "name": "Cospas-Sarsat 406,040 MHz",
+      "freq": 406040000,
+      "category": "space",
+      "scope": "world",
+      "parent": "uhf-406-4061-epirb",
+      "mode": "digital",
+      "notes": "Canale dei radiofari di soccorso 406 MHz del sistema Cospas-Sarsat.",
+      "source": {
+        "url": "https://www.cospas-sarsat.int/images/stories/SystemDocs/Current/T007-NOV-29-2022.pdf",
+        "title": "Cospas-Sarsat C/S T.007 – 406 MHz Distress Beacon Type Approval Standard (canali C/S T.012)",
+        "authority": "Cospas-Sarsat"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "mk-cb-ch9",
+      "name": "CB canale 9 (27,065 MHz)",
+      "freq": 27065000,
+      "category": "free",
+      "scope": "italy",
+      "parent": "it-cb27",
+      "mode": "phone",
+      "notes": "Canale 9 della banda cittadina, tradizionalmente usato per le emergenze (convenzione, non obbligo di legge).",
+      "source": {
+        "url": "https://www.gazzettaufficiale.it/eli/gu/2022/09/13/214/so/35/sg/pdf",
+        "title": "Piano nazionale di ripartizione delle frequenze tra 0 e 3000 GHz (DM 31 agosto 2022, GU n. 214 del 13-9-2022, S.O. n. 35)",
+        "authority": "MIMIT / Gazzetta Ufficiale"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "mk-cb-ch19",
+      "name": "CB canale 19 (27,185 MHz)",
+      "freq": 27185000,
+      "category": "free",
+      "scope": "italy",
+      "parent": "it-cb27",
+      "mode": "phone",
+      "notes": "Canale 19 della banda cittadina, usato per convenzione da camionisti e mezzi in viaggio.",
+      "source": {
+        "url": "https://www.gazzettaufficiale.it/eli/gu/2022/09/13/214/so/35/sg/pdf",
+        "title": "Piano nazionale di ripartizione delle frequenze tra 0 e 3000 GHz (DM 31 agosto 2022, GU n. 214 del 13-9-2022, S.O. n. 35)",
+        "authority": "MIMIT / Gazzetta Ufficiale"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "mk-pmr446-ch1",
+      "name": "PMR446 canale 1 (446,00625 MHz)",
+      "freq": 446006250,
+      "category": "mobile",
+      "scope": "europe",
+      "parent": "ecc-pmr446",
+      "mode": "phone",
+      "notes": "Primo dei 16 canali PMR446 analogici (passo 12,5 kHz), uso libero senza licenza.",
+      "source": {
+        "url": "https://docdb.cept.org/download/1491",
+        "title": "ECC/DEC/(15)05 – PMR 446 (446,0-446,2 MHz)",
+        "authority": "CEPT ECC"
+      },
+      "sourceTier": "primary"
+    },
+    {
+      "id": "mk-lpd-ch1",
+      "name": "LPD canale 1 (433,075 MHz)",
+      "freq": 433075000,
+      "category": "free",
+      "scope": "italy",
+      "parent": "it-lpd433",
+      "mode": "phone",
+      "notes": "Primo dei 69 canali LPD (433,075-434,775 MHz, passo 25 kHz), 10 mW, uso libero.",
+      "source": {
+        "url": "https://en.wikipedia.org/wiki/LPD433",
+        "title": "LPD433 – Wikipedia (tabella 69 canali)",
+        "authority": "Wikipedia"
+      },
+      "sourceTier": "secondary"
     }
   ]
 }

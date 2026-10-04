@@ -32,8 +32,23 @@
           <div class="cmd"><kbd>Ctrl + rotella</kbd><span>zoom (sul cursore)</span></div>
           <div class="cmd"><kbd>Shift + rotella</kbd><span>scorri frequenze</span></div>
           <div class="cmd"><kbd>scroll ↔</kbd><span>scorri frequenze</span></div>
-          <div class="cmd"><kbd>trascina barre</kbd><span>scorri ↕ / ↔</span></div>
-          <div class="cmd"><kbd>click banda</kbd><span>dettagli e fonte</span></div>
+          <div class="cmd"><kbd>trascina</kbd><span>sposta frequenze ↔ e corsie ↕</span></div>
+          <div class="cmd"><kbd>pizzica (touch)</kbd><span>zoom</span></div>
+          <div class="cmd"><kbd>click / tocco</kbd><span>dettagli e fonte</span></div>
+          <div class="cmd"><kbd>● pallino</kbd><span>frequenza singola</span></div>
+        </div>
+      </div>
+      <div class="filters">
+        <button id="filterBtn" class="cmd-btn" type="button" aria-expanded="false" aria-controls="filterMenu">Filtri <span id="filterCount" class="badge hidden"></span></button>
+        <div id="filterMenu" class="filter-menu hidden">
+          <div class="fm-title">Enti</div>
+          <div id="fScopes" class="fm-grid"></div>
+          <div class="fm-title">Categorie
+            <span class="fm-acts"><button type="button" data-all="1">tutte</button><button type="button" data-all="0">nessuna</button></span>
+          </div>
+          <div id="fCats" class="fm-grid"></div>
+          <div class="fm-title">Altro</div>
+          <label class="fm-item"><input type="checkbox" id="fMarkers"><span>Frequenze singole (●)</span></label>
         </div>
       </div>
       <button id="resetBtn" title="Torna alla vista completa">⤢ Reset</button>
