@@ -3,109 +3,74 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#121715">
+<meta name="theme-color" content="#F3F5F2" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#121715" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="../manifest.webmanifest">
 <link rel="icon" href="../icons/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
-<title>Codici Q e gergo</title>
+<title>Codici Q · Ham Toolkit</title>
+<link rel="stylesheet" href="../base.css">
 <style>
-:root{
-  --bg:#F3F5F2; --surface:#FFFFFF; --ink:#1A2320; --muted:#5C6964; --line:#D9DFDB;
-  --accent:#A85A06; --accent-ink:#FFFFFF; --accent-soft:#FBEFD9;
-  --ok:#1F6F54; --ok-soft:#DDF1E8; --danger:#B3261E; --danger-soft:#FBE3E1;
-}
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
-    color-scheme:dark;
-    --bg:#121715; --surface:#1A201E; --ink:#E4EAE7; --muted:#96A39E; --line:#2D3632;
-    --accent:#F0A847; --accent-ink:#1A1206; --accent-soft:#3A2A12;
-    --ok:#6FD3A8; --ok-soft:#16332A; --danger:#FF8A80; --danger-soft:#3A1C1A;
-  }
-}
-:root[data-theme="dark"]{
-  color-scheme:dark;
-  --bg:#121715; --surface:#1A201E; --ink:#E4EAE7; --muted:#96A39E; --line:#2D3632;
-  --accent:#F0A847; --accent-ink:#1A1206; --accent-soft:#3A2A12;
-  --ok:#6FD3A8; --ok-soft:#16332A; --danger:#FF8A80; --danger-soft:#3A1C1A;
-}
-*{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
-.mono{font-family:ui-monospace,"SF Mono","Cascadia Mono",Consolas,monospace}
-.wrap{max-width:720px;margin:0 auto;padding:12px 16px calc(32px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:14px}
-button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
-input{font:inherit;color:var(--ink)}
-:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-[hidden]{display:none !important}
+section{display:flex;flex-direction:column;gap:14px}
 
 /* testata e navigazione */
-.top{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.top h1{margin:0;font-size:15px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);white-space:nowrap;margin-right:auto}
-nav{display:flex;gap:4px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:3px}
-nav a{padding:6px 14px;border-radius:8px;text-decoration:none;color:var(--muted);font-weight:600;font-size:14px}
+.top h1{margin-right:auto}
+nav{display:flex;gap:var(--s1);background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:3px}
+nav a{padding:6px 14px;border-radius:var(--r-sm);text-decoration:none;color:var(--muted);font-weight:600;font-size:var(--fs-md)}
 nav a.on{background:var(--accent);color:var(--accent-ink)}
 
 /* barra filtri */
-.bar{position:sticky;top:0;z-index:5;background:var(--bg);padding:6px 0;display:flex;flex-direction:column;gap:8px}
-#q{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--surface);font-size:17px}
-#q::placeholder{color:var(--muted)}
-.chips{display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:14px;color:var(--muted)}
-.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:4px 12px;font-size:14px;font-weight:600;color:var(--muted)}
-.chip.on{border-color:var(--accent);background:var(--accent-soft);color:var(--ink)}
+.bar{position:sticky;top:0;z-index:5;background:var(--bg);padding:6px 0;display:flex;flex-direction:column;gap:var(--s2)}
+#q{width:100%;font-size:var(--fs)}
+.bar .chips{font-size:var(--fs-md);color:var(--muted)}
 #count{margin-left:auto}
 
 /* elenco */
 #list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
-#list li{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:grid;grid-template-columns:64px 1fr;gap:2px 12px}
-.code{grid-row:1/5;overflow-wrap:anywhere;font-size:22px;font-weight:700;color:var(--accent);letter-spacing:.03em}
-.code small{display:block;font:600 10px system-ui;letter-spacing:.06em;color:var(--muted);text-transform:uppercase;margin-top:2px}
-.qd,.qr{font-size:15px}
+#list li{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);padding:10px var(--s3);display:grid;grid-template-columns:64px 1fr;gap:2px var(--s3)}
+.code{grid-row:1/5;overflow-wrap:anywhere;font-size:var(--fs-xl);font-weight:700;color:var(--accent);letter-spacing:.03em}
+.code small{display:block;font-family:var(--font);font-size:var(--fs-2xs);font-weight:600;letter-spacing:.06em;color:var(--muted);text-transform:uppercase;margin-top:2px}
+.qd,.qr{font-size:var(--fs)}
 .qd b,.qr b{display:inline-block;width:1.4em;color:var(--muted);font-weight:600}
-.ham{font-size:14px;color:var(--ok);margin-top:2px}
+.ham{font-size:var(--fs-md);color:var(--ok);margin-top:2px}
 .ham::before{content:"Uso ham: ";font-weight:700}
 mark{background:var(--accent-soft);color:inherit;border-radius:3px;padding:0 1px}
-.empty{text-align:center;color:var(--muted);padding:24px 8px;border:1px dashed var(--line);border-radius:10px}
-.note{font-size:13px;color:var(--muted)}
 
 /* flashcard */
-.opts{display:flex;flex-direction:column;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:14px}
+.opts{display:flex;flex-direction:column;gap:var(--s2);font-size:var(--fs-md)}
 .opts .row{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
 .opts .row > span{width:5.5em;color:var(--muted)}
-.prog{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--muted)}
-.prog .track{flex:1;height:6px;border-radius:3px;background:var(--line);overflow:hidden}
+.prog{display:flex;align-items:center;gap:10px;font-size:var(--fs-md);color:var(--muted)}
+.prog .track{flex:1;height:6px;border-radius:var(--r-pill);background:var(--line);overflow:hidden}
 .prog .fill{height:100%;background:var(--accent);width:0;transition:width .2s}
 .prog .ok{color:var(--ok);font-weight:700}
 .prog .ko{color:var(--danger);font-weight:700}
-.fcard{min-height:280px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px 20px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;cursor:pointer;user-select:none;-webkit-user-select:none;box-shadow:0 10px 24px -18px rgba(0,0,0,.5)}
-.fcard .side{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.fcard{min-height:280px;padding:22px 20px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;cursor:pointer;user-select:none;-webkit-user-select:none;box-shadow:var(--shadow)}
+.fcard .side{font-size:var(--fs-xs);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 .fcard .big{font-size:clamp(44px,14vw,72px);font-weight:700;color:var(--accent);letter-spacing:.04em;line-height:1}
-.fcard .txt{font-size:18px;max-width:34em}
-.fcard .txt .qd,.fcard .txt .qr{font-size:17px;text-align:left}
-.fcard hr{width:60%;border:0;border-top:1px dashed var(--line);margin:4px 0}
-.fcard .tap{font-size:13px;color:var(--muted)}
+.fcard .txt{font-size:var(--fs-lg);max-width:34em}
+.fcard .txt .qd,.fcard .txt .qr{font-size:var(--fs);text-align:left}
+.fcard hr{width:60%;border:0;border-top:1px dashed var(--line);margin:var(--s1) 0}
+.fcard .tap{font-size:var(--fs-sm);color:var(--muted)}
 .fcard.done{cursor:default}
-.acts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.acts button{border:0;border-radius:12px;padding:14px;font-size:17px;font-weight:700}
+.acts{display:grid;grid-template-columns:1fr 1fr;gap:var(--s2)}
+.acts .btn{border:0}
 #btnKo{background:var(--danger-soft);color:var(--danger)}
 #btnOk{background:var(--ok-soft);color:var(--ok)}
-#btnFlip{grid-column:1/-1;background:var(--accent);color:var(--accent-ink)}
-#abc{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden;font-size:15px}
-#abc th,#abc td{padding:6px 10px;border-bottom:1px solid var(--line);text-align:left}
-#abc th{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+#btnFlip{grid-column:1/-1}
+
+/* alfabeto */
+#abc{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);border-collapse:separate;border-spacing:0;overflow:hidden}
+#abc tr:last-child td{border-bottom:0}
 #abc td:first-child{font-weight:700;color:var(--accent);width:2.5em}
-#abc td.pr{color:var(--muted);font-size:14px}
+#abc td.pr{color:var(--muted);font-size:var(--fs-sm)}
 #abc td.it{color:var(--muted)}
 #acard .spell{font-size:clamp(20px,5.5vw,26px);font-weight:600;line-height:1.35}
 #acard .spell span{white-space:nowrap}
 #acard .big{font-size:clamp(36px,11vw,60px)}
-.two{display:flex;gap:8px}
-.two button{flex:1;border:0;border-radius:12px;padding:14px;font-size:17px;font-weight:700}
-#aFlip{background:var(--accent);color:var(--accent-ink)}
-#aNew{background:var(--surface);border:1px solid var(--line) !important}
-h2{margin:6px 0 0;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
-#btnRestart{border:1px solid var(--line);background:transparent;border-radius:10px;padding:8px 14px;font-weight:600}
-.home{display:inline-flex;align-items:center;gap:4px;color:var(--muted);text-decoration:none;font-size:14px;font-weight:600;margin-bottom:-6px}
-.home:hover{color:var(--accent)}
+.two{display:flex;gap:var(--s2)}
+.two .btn{flex:1}
+#btnRestart{margin-left:var(--s1);padding:var(--s1) var(--s3);font-size:var(--fs-sm)}
 </style>
 </head>
 <body>
@@ -123,7 +88,7 @@ h2{margin:6px 0 0;font-size:13px;letter-spacing:.08em;text-transform:uppercase;c
   <!-- ================= ELENCO ================= -->
   <section id="pageList">
     <div class="bar">
-      <input id="q" type="search" placeholder="Cerca codice, abbreviazione o definizione (es. QTH, 73, potenza…)" autocomplete="off" spellcheck="false">
+      <input id="q" class="field" type="search" placeholder="Cerca codice, abbreviazione o definizione (es. QTH, 73, potenza…)" autocomplete="off" spellcheck="false">
       <div class="chips" id="listChips">
         <button class="chip on" data-set="all">Tutti</button>
         <button class="chip" data-set="top">Più usati</button>
@@ -144,7 +109,7 @@ h2{margin:6px 0 0;font-size:13px;letter-spacing:.08em;text-transform:uppercase;c
 
   <!-- ================= FLASHCARD ================= -->
   <section id="pageCards" hidden>
-    <div class="opts">
+    <div class="opts card">
       <div class="row"><span>Direzione</span>
         <button class="chip on" data-dir="c2d">Codice → significato</button>
         <button class="chip" data-dir="d2c">Significato → codice</button>
@@ -162,19 +127,19 @@ h2{margin:6px 0 0;font-size:13px;letter-spacing:.08em;text-transform:uppercase;c
       <div class="track"><div class="fill" id="pFill"></div></div>
       <span class="ok" id="pOk">0</span>/<span class="ko" id="pKo">0</span>
     </div>
-    <div id="card" class="fcard" tabindex="0"></div>
+    <div id="card" class="fcard card" tabindex="0"></div>
     <div class="acts">
-      <button id="btnFlip">Gira</button>
-      <button id="btnKo" hidden>✗ Non sapevo</button>
-      <button id="btnOk" hidden>✓ Sapevo</button>
+      <button id="btnFlip" class="btn big primary">Gira</button>
+      <button id="btnKo" class="btn big" hidden>✗ Non sapevo</button>
+      <button id="btnOk" class="btn big" hidden>✓ Sapevo</button>
     </div>
     <p class="note">Tastiera: <b>spazio</b> gira, <b>←</b> non sapevo, <b>→</b> sapevo. Le carte sbagliate tornano nel mazzo finché non le indovini.
-      <button id="btnRestart">Ricomincia</button></p>
+      <button id="btnRestart" class="btn ghost">Ricomincia</button></p>
   </section>
 
   <!-- ================= ALFABETO ================= -->
   <section id="pageAbc" hidden>
-    <div class="opts">
+    <div class="opts card">
       <div class="row"><span>Esercizio</span>
         <button class="chip on" data-amode="c2s">Nominativo → spelling</button>
         <button class="chip" data-amode="s2c">Spelling → nominativo</button>
@@ -184,12 +149,12 @@ h2{margin:6px 0 0;font-size:13px;letter-spacing:.08em;text-transform:uppercase;c
         <button class="chip" data-digits="en">in inglese (ICAO)</button>
       </div>
     </div>
-    <div id="acard" class="fcard" tabindex="0"></div>
+    <div id="acard" class="fcard card" tabindex="0"></div>
     <div class="two">
-      <button id="aFlip">Gira</button>
-      <button id="aNew">Nuovo nominativo</button>
+      <button id="aFlip" class="btn big primary">Gira</button>
+      <button id="aNew" class="btn big">Nuovo nominativo</button>
     </div>
-    <p class="note">Tastiera: <b>spazio</b> gira, <b>invio</b> nuovo nominativo. Il primo è sempre il tuo.
+    <p class="note">Tastiera: <b>spazio</b> gira, <b>invio</b> nuovo nominativo.
       Si dice a voce alta, poi si gira la carta per controllare.</p>
 
     <h2>Alfabeto fonetico internazionale (ITU/ICAO/NATO)</h2>

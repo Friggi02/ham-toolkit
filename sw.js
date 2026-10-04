@@ -2,17 +2,20 @@
  * Strategia stale-while-revalidate: risponde subito dalla cache e aggiorna in
  * background, quindi una modifica pubblicata si vede dalla visita successiva.
  * Cambiare VERSION solo per buttare via le cache vecchie (es. file rimossi). */
-const VERSION = 'v1';
+const VERSION = 'v2';
 const CACHE = `ham-toolkit-${VERSION}`;
 const FILES = [
-  './', 'manifest.webmanifest', 'pwa.js',
+  './', 'base.css', 'manifest.webmanifest', 'pwa.js',
   'icons/icon.svg', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-maskable-512.png', 'icons/apple-touch-icon.png',
-  'spettro/', 'spettro/style.css', 'spettro/sdr.js', 'spettro/app.js', 'spettro/bands.json', 'spettro/favicon.svg',
+  'spettro/', 'spettro/style.css', 'spettro/sdr.js', 'spettro/app.js', 'spettro/bands.json',
   'codici-q/', 'dipolo/', 'ruota/',
 ];
 
 self.addEventListener('install', e => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)).then(() => self.skipWaiting()));
+  // cache: 'reload' scavalca la cache HTTP del browser, che potrebbe avere file vecchi
+  e.waitUntil(caches.open(CACHE)
+    .then(c => c.addAll(FILES.map(u => new Request(u, { cache: 'reload' }))))
+    .then(() => self.skipWaiting()));
 });
 
 self.addEventListener('activate', e => {
@@ -30,7 +33,7 @@ self.addEventListener('fetch', e => {
   e.respondWith((async () => {
     const cache = await caches.open(CACHE);
     const hit = await cache.match(req, { ignoreSearch: true });
-    const net = fetch(req)
+    const net = fetch(req, { cache: 'no-cache' })   // riconvalida sempre col server (ETag)
       .then(res => { if (res.ok) cache.put(req, res.clone()); return res; })
       .catch(() => null);
     if (hit) { e.waitUntil(net); return hit; }

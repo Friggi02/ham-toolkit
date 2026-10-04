@@ -17,6 +17,7 @@ Strumenti web per radioamatori e ascoltatori. Funzionano anche **offline** e si 
 - Ogni strumento è una cartella con il suo `index.html`. La home (`index.html`) è solo l'indice.
 - `sw.js` è il service worker: mette in cache tutto il sito alla prima visita e risponde dalla cache (stale-while-revalidate), quindi un aggiornamento si vede dalla visita successiva. Un nuovo strumento va aggiunto alla lista `FILES` in `sw.js`, alle `shortcuts` di `manifest.webmanifest` e alla home.
 - `pwa.js` registra il service worker ed è incluso da tutte le pagine.
+- `base.css` è lo stile condiviso: token (colori chiaro/scuro, stondature, spazi, font, scala delle dimensioni) e componenti comuni (`.card`, `.btn`, `.field`, `.chip`, titoli, tabelle). Le pagine aggiungono solo le regole proprie e usano i token, senza colori, raggi o font scritti a mano. Lo spettro legge gli stessi token anche per il canvas.
 - Le impostazioni restano nel `localStorage` del browser. Nessun dato va a server, tranne le ricerche su QRZ se le attivi nella ruota.
 
 ## In locale

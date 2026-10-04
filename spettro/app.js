@@ -33,6 +33,21 @@ const SCOPE_META = {
   other:   { label: 'ALTRO',                 tint: 'rgba(150,150,150,.04)' },
 };
 
+// ---- Tema: colori e font del canvas, letti dai token di ../base.css ----
+// Si rilegge quando il sistema passa da chiaro a scuro e viceversa.
+const THEME = {};
+function readTheme() {
+  const cs = getComputedStyle(document.documentElement);
+  const v = (name) => cs.getPropertyValue(name).trim();
+  Object.assign(THEME, {
+    ink: v('--ink'), muted: v('--muted'), faint: v('--faint'), surface: v('--surface'),
+    line: v('--line'), lineStrong: v('--line-strong'), accent: v('--accent'), accentInk: v('--accent-ink'),
+    font: v('--font'),
+  });
+}
+const font = (px, weight) => (weight ? weight + ' ' : '') + px + 'px ' + THEME.font;
+readTheme();
+
 // ---- Stato ----
 let DPR = Math.max(1, window.devicePixelRatio || 1);
 let canvas, ctx, W = 0, H = 0;
@@ -290,20 +305,20 @@ function drawFocusMark() {
   if (x < PAD.left - 1 || x > W - PAD.right + 1) return;
   const hz = Math.pow(10, focusMark);
 
-  ctx.strokeStyle = 'rgba(240,160,48,.95)';
+  ctx.strokeStyle = THEME.accent;
   ctx.lineWidth = 1.5;
   ctx.setLineDash([6, 3]);
   line(x + 0.5, PAD.top, x + 0.5, H - PAD.bottom);
   ctx.setLineDash([]);
 
   const txt = '◎ ' + fmtHzP(hz, cursorDigits(hz)) + '  ·  ' + fmtLen(freqToLen(hz));
-  ctx.font = '600 11px "Segoe UI", system-ui, sans-serif';
+  ctx.font = font(11, 600);
   const tw = ctx.measureText(txt).width;
   const bx = Math.min(Math.max(x - tw / 2 - 8, PAD.left), W - PAD.right - tw - 16);
   const by = PAD.top + 32;
-  ctx.fillStyle = 'rgba(240,160,48,.96)';
+  ctx.fillStyle = THEME.accent;
   roundRect(bx, by, tw + 16, 22, 6); ctx.fill();
-  ctx.fillStyle = '#1a1205';
+  ctx.fillStyle = THEME.accentInk;
   ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
   ctx.fillText(txt, bx + 8, by + 11);
 }
@@ -341,18 +356,18 @@ function drawScrollbars() {
   const v = vScrollGeom();
   if (v) {
     const r = SCROLLBAR_W / 2;
-    ctx.fillStyle = 'rgba(70,80,95,.22)';                 // traccia
+    ctx.fillStyle = rgba(THEME.muted, .15);                 // traccia
     roundRect(v.x, PAD.top, SCROLLBAR_W, v.areaH, r); ctx.fill();
-    ctx.fillStyle = active('v') ? 'rgba(160,180,205,.85)' : 'rgba(120,135,155,.5)';
+    ctx.fillStyle = active('v') ? rgba(THEME.muted, .85) : rgba(THEME.muted, .45);
     roundRect(v.x, v.thumbY, SCROLLBAR_W, v.thumbH, r); ctx.fill();
   }
   const h = hScrollGeom();
   if (h) {
     const r = h.h / 2;
-    ctx.fillStyle = 'rgba(70,80,95,.22)';                 // traccia
+    ctx.fillStyle = rgba(THEME.muted, .15);                 // traccia
     roundRect(h.x0, h.y, h.trackW, h.h, r); ctx.fill();
-    ctx.fillStyle = !h.scrollable ? 'rgba(120,135,155,.22)'
-                  : active('h') ? 'rgba(160,180,205,.85)' : 'rgba(120,135,155,.5)';
+    ctx.fillStyle = !h.scrollable ? rgba(THEME.muted, .2)
+                  : active('h') ? rgba(THEME.muted, .85) : rgba(THEME.muted, .45);
     roundRect(h.thumbX, h.y, h.thumbW, h.h, r); ctx.fill();
   }
 }
@@ -394,12 +409,12 @@ function drawGroups() {
     ctx.fillStyle = meta.tint;
     ctx.fillRect(PAD.left, g.laneY - 2, bandAreaW(), g.height + 4);
     // separatore sotto l'intestazione
-    ctx.strokeStyle = 'rgba(70,88,108,.35)';
+    ctx.strokeStyle = THEME.line;
     ctx.lineWidth = 1;
     line(PAD.left, g.headerY + GROUP_HEADER - 0.5, W - PAD.right, g.headerY + GROUP_HEADER - 0.5);
     // etichetta ente
-    ctx.fillStyle = 'rgba(139,152,168,.92)';
-    ctx.font = '600 10px "Segoe UI", system-ui, sans-serif';
+    ctx.fillStyle = THEME.muted;
+    ctx.font = font(10, 600);
     ctx.textAlign = 'left';
     ctx.textBaseline = 'middle';
     ctx.fillText(meta.label, PAD.left + 4, g.headerY + GROUP_HEADER / 2);
@@ -413,7 +428,7 @@ function drawGrid() {
   const dStart = Math.floor(view.min);
   const dEnd = Math.ceil(view.max);
 
-  ctx.font = '12px "Segoe UI", system-ui, sans-serif';
+  ctx.font = font(12);
   ctx.textBaseline = 'alphabetic';
 
   // minor tick: mostra 2..9 quando c'è spazio
@@ -452,14 +467,14 @@ function drawLinearTicks(pxPerDecade) {
 
 function drawRulerFrame() {
   // basi dei righelli
-  ctx.strokeStyle = '#2c3a4a';
+  ctx.strokeStyle = THEME.lineStrong;
   ctx.lineWidth = 1;
   line(PAD.left, PAD.top - 0.5, W - PAD.right, PAD.top - 0.5);
   line(PAD.left, H - PAD.bottom + 0.5, W - PAD.right, H - PAD.bottom + 0.5);
 
   // titoli righelli
-  ctx.fillStyle = '#5b6675';
-  ctx.font = '11px "Segoe UI", system-ui, sans-serif';
+  ctx.fillStyle = THEME.faint;
+  ctx.font = font(11);
   ctx.textAlign = 'left';
   ctx.fillText('FREQUENZA', PAD.left + 2, 16);
   ctx.fillText('LUNGHEZZA D’ONDA', PAD.left + 2, H - 14);
@@ -470,19 +485,19 @@ function drawTick(logF, major, pxPerDecade, labelMinor, sig) {
   if (x < PAD.left - 1 || x > W - PAD.right + 1) return;
   const hz = Math.pow(10, logF);
 
-  ctx.strokeStyle = major ? '#2c3a4a' : '#1d2733';
+  ctx.strokeStyle = major ? THEME.line : rgba(THEME.line, .5);
   ctx.lineWidth = 1;
   // linea verticale di griglia attraverso l'area bande
   line(x + 0.5, PAD.top, x + 0.5, H - PAD.bottom);
 
   // tacche sui righelli
-  ctx.strokeStyle = major ? '#46586c' : '#2c3a4a';
+  ctx.strokeStyle = major ? THEME.lineStrong : THEME.line;
   line(x + 0.5, PAD.top - 7, x + 0.5, PAD.top);
   line(x + 0.5, H - PAD.bottom, x + 0.5, H - PAD.bottom + 7);
 
   if (major || labelMinor) {
-    ctx.fillStyle = major ? '#c2cdda' : '#7a8696';
-    ctx.font = (major ? '12px' : '11px') + ' "Segoe UI", system-ui, sans-serif';
+    ctx.fillStyle = major ? THEME.ink : THEME.muted;
+    ctx.font = font(major ? 12 : 11);
     ctx.textAlign = 'center';
     // Hz in alto
     ctx.fillText(sig ? fmtHzP(hz, sig) : fmtHz(hz), x, PAD.top - 12);
@@ -545,7 +560,7 @@ function markerVisible(m) {
 function drawMarkers() {
   const left = PAD.left, right = W - PAD.right;
   let hoverLabel = null;
-  ctx.font = '600 11px "Segoe UI", system-ui, sans-serif';
+  ctx.font = font(11, 600);
   for (const g of layout.groups) {
     const vis = [];
     for (const m of g.markers) {       // già ordinati per frequenza
@@ -574,7 +589,7 @@ function drawMarkers() {
       const limit = i + 1 < vis.length ? vis[i + 1].x - 8 : right;
       if (on) hoverLabel = { m, lx, cy, tw };
       else if (lx + tw < limit) {
-        ctx.fillStyle = 'rgba(230,237,243,.78)';
+        ctx.fillStyle = rgba(THEME.ink, .8);
         ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
         ctx.fillText(m.name, lx, cy + 0.5);
       }
@@ -584,12 +599,12 @@ function drawMarkers() {
   if (hoverLabel) {
     const { m, cy, tw } = hoverLabel;
     const lx = Math.min(hoverLabel.lx, right - tw - 10);
-    ctx.fillStyle = 'rgba(10,14,20,.94)';
+    ctx.fillStyle = THEME.surface;
     roundRect(lx - 5, cy - 9, tw + 10, 18, 5); ctx.fill();
     ctx.strokeStyle = bandColor(m); ctx.lineWidth = 1;
     roundRect(lx - 5, cy - 9, tw + 10, 18, 5); ctx.stroke();
-    ctx.fillStyle = '#f3f7fb';
-    ctx.font = '600 11px "Segoe UI", system-ui, sans-serif';
+    ctx.fillStyle = THEME.ink;
+    ctx.font = font(11, 600);
     ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
     ctx.fillText(m.name, lx, cy + 0.5);
   }
@@ -626,18 +641,18 @@ function drawBandLabel(b, x0, x1, y, h) {
   ctx.textBaseline = 'middle';
 
   if (twoLines) {
-    ctx.fillStyle = '#f3f7fb';
-    ctx.font = '600 13px "Segoe UI", system-ui, sans-serif';
+    ctx.fillStyle = THEME.ink;
+    ctx.font = font(13, 600);
     ctx.fillText(b.name, x0 + pad, y + h / 2 - 8);
 
-    ctx.fillStyle = 'rgba(230,237,243,.62)';
-    ctx.font = '11px "Segoe UI", system-ui, sans-serif';
+    ctx.fillStyle = THEME.muted;
+    ctx.font = font(11);
     let sub = fmtHzP(b.from) + ' – ' + fmtHzP(b.to);
     if (b.mode) sub += '  ·  ' + modeLabel(b.mode);
     ctx.fillText(sub, x0 + pad, y + h / 2 + 9);
   } else {
-    ctx.fillStyle = '#f3f7fb';
-    ctx.font = '600 12px "Segoe UI", system-ui, sans-serif';
+    ctx.fillStyle = THEME.ink;
+    ctx.font = font(12, 600);
     ctx.fillText(b.name, x0 + pad, y + h / 2);
   }
   ctx.restore();
@@ -660,7 +675,7 @@ function drawCursor() {
   const logF = xToLog(x);
   const hz = Math.pow(10, logF);
 
-  ctx.strokeStyle = 'rgba(45,212,191,.55)';
+  ctx.strokeStyle = rgba(THEME.ink, .4);
   ctx.lineWidth = 1;
   ctx.setLineDash([4, 4]);
   line(x + 0.5, PAD.top, x + 0.5, H - PAD.bottom);
@@ -668,15 +683,15 @@ function drawCursor() {
 
   // etichetta fluttuante
   const txt = fmtHzP(hz, cursorDigits(hz)) + '   ·   ' + fmtLen(freqToLen(hz));
-  ctx.font = '600 12px "Segoe UI", system-ui, sans-serif';
+  ctx.font = font(12, 600);
   const tw = ctx.measureText(txt).width;
   const bx = Math.min(Math.max(x - tw / 2 - 8, PAD.left), W - PAD.right - tw - 16);
   const by = PAD.top + 4;
-  ctx.fillStyle = 'rgba(10,14,20,.92)';
+  ctx.fillStyle = THEME.surface;
   roundRect(bx, by, tw + 16, 24, 6); ctx.fill();
-  ctx.strokeStyle = 'rgba(45,212,191,.6)'; ctx.lineWidth = 1;
+  ctx.strokeStyle = THEME.lineStrong; ctx.lineWidth = 1;
   roundRect(bx, by, tw + 16, 24, 6); ctx.stroke();
-  ctx.fillStyle = '#bdf5ee';
+  ctx.fillStyle = THEME.ink;
   ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
   ctx.fillText(txt, bx + 8, by + 13);
 }
@@ -1294,6 +1309,7 @@ async function init() {
     return;
   }
 
+  matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { readTheme(); scheduleDraw(); });
   resize();
   new ResizeObserver(resize).observe(document.getElementById('stage'));   // anche quando la barra va a capo
   canvas.addEventListener('wheel', onWheel, { passive: false });
