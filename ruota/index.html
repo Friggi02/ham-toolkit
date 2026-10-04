@@ -115,6 +115,8 @@ summary{cursor:pointer;font-weight:600;color:var(--ink)}
 .qrzform label{display:flex;align-items:center;gap:6px}
 #qrzState{grid-column:1/-1;font-size:13px}
 #qrzState.err{color:var(--danger)}
+.privacy{margin:10px 0 0;font-size:13px;line-height:1.5}
+.privacy a{color:var(--accent)}
 #qrzSum{margin-left:6px;font-weight:600;color:var(--me)}
 .qrzok{display:flex;align-items:center;gap:10px;margin-top:10px;padding:10px 12px;border-radius:8px;background:var(--me-soft);color:var(--me);font-weight:600}
 .qrzok button{margin-left:auto;border:1px solid var(--me);background:transparent;color:var(--me);border-radius:8px;padding:4px 12px;font-weight:600}
@@ -176,6 +178,7 @@ summary{cursor:pointer;font-weight:600;color:var(--ink)}
         <button id="btnQrz" class="btn full" type="button">Accedi</button>
         <span id="qrzState"></span>
       </div>
+      <p class="privacy">🔒 <b>Le tue credenziali non arrivano a noi né a terzi.</b> Questa pagina non ha un server: utente e password vanno solo a QRZ (<span class="mono">xmldata.qrz.com</span>, in HTTPS), per ottenere la chiave di sessione con cui si cercano i nomi. Restano salvati soltanto in questo browser l'utente e la chiave di sessione, e la password solo se spunti «Ricorda». Il codice non è offuscato: puoi controllarlo da computer con F12 (nella scheda Rete vedi a chi va ogni richiesta) oppure leggerlo <a href="https://github.com/Friggi02/ham-toolkit/blob/main/ruota/index.html" target="_blank" rel="noopener">su GitHub</a>.</p>
     </details>
     <button id="btnClear" type="button">Nuova ruota</button>
   </footer>
