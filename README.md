@@ -1,71 +1,31 @@
-# 📡 Radio Spectrum Explorer
+# 📡 Ham Toolkit
 
-Visualizzatore interattivo dello **spettro elettromagnetico** su scala logaritmica, dalle frequenze radio (1 Hz) ai raggi gamma (10²⁴ Hz). Esplora le bande scorrendo e zoomando, con doppio righello **frequenza (Hz)** e **lunghezza d'onda (λ)**, e ogni banda cita la sua **fonte ufficiale**.
+Strumenti web per radioamatori e ascoltatori. Funzionano anche **offline** e si installano sul telefono come app (PWA).
 
-🔗 **Live:** https://friggi02.github.io/radio-spectrum-explorer/
+🔗 **Live:** https://friggi02.github.io/ham-toolkit/
 
-## Caratteristiche
+| Strumento | Cosa fa |
+|---|---|
+| [Spettro radio](spettro/) | Lo spettro elettromagnetico da 1 Hz a 10²⁴ Hz su scala logaritmica, con le bande ITU, CEPT, PNRF e IARU e la fonte ufficiale di ogni banda. Dettagli in [`spettro/README.md`](spettro/README.md). |
+| [Codici Q](codici-q/) | Codici Q e abbreviazioni CW con ricerca, flashcard nei due sensi e alfabeto fonetico con esercizio di spelling. |
+| [Calcolatore dipolo](dipolo/) | Lunghezza dei bracci di un dipolo a mezz'onda, con preset per le bande radioamatoriali e per gli ascolti con l'RTL-SDR. |
+| [Ruota sul ponte](ruota/) | Tiene l'ordine dei turni nella ruota sul ripetitore, con i nomi proposti da QRZ (XML API, serve un account). |
 
-- **Scala logaritmica** 1 Hz → 10²⁴ Hz (24 ordini di grandezza su un'unica linea).
-- **Doppio righello**: frequenza in alto, lunghezza d'onda in basso, entrambi aggiornati in tempo reale.
-- **Navigazione**: rotella per scorrere in verticale, `Ctrl`+rotella per zoomare (centrato sul cursore), `Shift`+rotella o scroll orizzontale per scorrere le frequenze, trascinamento per spostarsi; più scrollbar trascinabili.
-- **Touch**: un dito sposta frequenze e corsie, due dita fanno lo zoom a pizzico, un tocco apre i dettagli. Su schermi stretti la barra va su più righe e il pannello sale dal basso.
-- **Frequenze singole**: le frequenze puntuali (chiamate, FT8, ISS, ADS-B, soccorso…) sono marcatori ● con linea verticale, visibili quando la banda che le contiene è abbastanza larga.
-- **Filtri** per ente e per categoria, e per mostrare o nascondere le frequenze singole.
-- **Link condivisibile**: la vista (zoom, banda selezionata, filtri) è sempre nell'URL (`#v=…&sel=…`), con un pulsante "Copia link" nel pannello.
-- **Righello preciso**: allo zoom forte le tacche diventano lineari e il cursore mostra le cifre significative che servono.
-- **Organizzazione per ente**: le bande sono raggruppate in **Fisica**, **Mondo (ITU)**, **Europa (CEPT/ECC)** e **Italia (PNRF)**, impacchettate in corsie automatiche senza sovrapposizioni.
-- **Livelli di dettaglio**: le bande compaiono man mano che zoomi; la luce visibile è resa col suo gradiente reale.
-- **Pannello dettagli**: cliccando una banda vedi intervallo, λ, categoria, scope, modo (CW/fonia/digitale per i radioamatori), note e **link alla fonte** (con indicazione se primaria o secondaria).
+## Come è fatto
 
-## Dati
+- HTML, CSS e JavaScript puro, nessun framework, nessuna build e nessuna dipendenza.
+- Ogni strumento è una cartella con il suo `index.html`. La home (`index.html`) è solo l'indice.
+- `sw.js` è il service worker: mette in cache tutto il sito alla prima visita e risponde dalla cache (stale-while-revalidate), quindi un aggiornamento si vede dalla visita successiva. Un nuovo strumento va aggiunto alla lista `FILES` in `sw.js`, alle `shortcuts` di `manifest.webmanifest` e alla home.
+- `pwa.js` registra il service worker ed è incluso da tutte le pagine.
+- Le impostazioni restano nel `localStorage` del browser. Nessun dato va a server, tranne le ricerche su QRZ se le attivi nella ruota.
 
-Tutte le bande sono in [`bands.json`](bands.json), una lista piatta con gerarchia via campo `parent`. Ogni banda ha:
-
-```json
-{
-  "id": "ham-40m-cw",
-  "name": "40 m — CW",
-  "from": 7000000, "to": 7040000,
-  "category": "amateur",
-  "scope": "europe",
-  "mode": "cw",
-  "parent": "ham-40m",
-  "notes": "...",
-  "source": { "url": "...", "title": "...", "authority": "IARU R1" },
-  "sourceTier": "primary"
-}
-```
-
-Le frequenze singole usano `freq` (Hz) al posto di `from`/`to`, e un `parent` che le contiene (da lì dipende quando compaiono):
-
-```json
-{ "id": "mk-iss-downlink", "name": "ISS fonia/SSTV", "freq": 145800000, "category": "amateur",
-  "scope": "europe", "parent": "...", "notes": "...", "source": { ... }, "sourceTier": "primary" }
-```
-
-Le ~550 bande sono state raccolte da fonti ufficiali: **ITU Radio Regulations / ITU-R**, **CEPT/ECC**, **PNRF italiano (MIMIT)**, **band plan IARU Region 1**, oltre a fonti su GNSS, satelliti e fisica dello spettro. Dove non è stato possibile reperire il documento primario, la fonte è marcata `sourceTier: "secondary"`.
-
-> ⚠️ I confini delle bande sono a scopo divulgativo: per usi operativi fare sempre riferimento ai documenti ufficiali citati.
-
-## Come usarlo in locale
-
-I browser bloccano `fetch` dei file via `file://`, quindi serve un piccolo server statico:
+## In locale
 
 ```bash
 python -m http.server 8000
 # poi apri http://localhost:8000
 ```
 
-## Stack
+Pubblicato con GitHub Pages dal branch `main`, cartella radice.
 
-HTML + CSS + JavaScript puro (nessun framework). Rendering su `<canvas>` 2D con hit-testing, packing a corsie e level-of-detail custom. Configurazione interamente da `bands.json`.
-
-## Struttura
-
-```
-index.html    # markup e contenitori
-style.css     # tema dark
-app.js        # motore: scala log, zoom/pan, righelli, packing, pannello
-bands.json    # dataset delle bande con fonti
-```
+> ⚠️ I dati sono a scopo divulgativo: per frequenze, potenze e modi ammessi fa fede la normativa citata nelle fonti.

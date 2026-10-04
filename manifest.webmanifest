@@ -1,0 +1,23 @@
+{
+  "name": "Ham Toolkit",
+  "short_name": "Ham Toolkit",
+  "description": "Strumenti per radioamatori e ascoltatori: spettro radio, codici Q, calcolatore dipolo, ruota sul ponte. Funziona anche offline.",
+  "lang": "it",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#121715",
+  "theme_color": "#121715",
+  "icons": [
+    { "src": "icons/icon.svg", "sizes": "any", "type": "image/svg+xml" },
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Spettro radio", "url": "spettro/" },
+    { "name": "Codici Q", "url": "codici-q/" },
+    { "name": "Calcolatore dipolo", "url": "dipolo/" },
+    { "name": "Ruota sul ponte", "url": "ruota/" }
+  ]
+}

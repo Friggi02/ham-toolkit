@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#121715">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" href="../icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<title>Calcolatore dipolo</title>
+<style>
+:root{
+  --bg:#F3F5F2; --surface:#FFFFFF; --ink:#1A2320; --muted:#5C6964; --line:#D9DFDB;
+  --accent:#A85A06; --accent-ink:#FFFFFF; --accent-soft:#FBEFD9;
+  --ok:#1F6F54; --ok-soft:#DDF1E8; --warn:#8A5A00; --warn-soft:#FFF4D6;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#121715; --surface:#1A201E; --ink:#E4EAE7; --muted:#96A39E; --line:#2D3632;
+    --accent:#F0A847; --accent-ink:#1A1206; --accent-soft:#3A2A12;
+    --ok:#6FD3A8; --ok-soft:#16332A; --warn:#F5C451; --warn-soft:#352A10;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#121715; --surface:#1A201E; --ink:#E4EAE7; --muted:#96A39E; --line:#2D3632;
+  --accent:#F0A847; --accent-ink:#1A1206; --accent-soft:#3A2A12;
+  --ok:#6FD3A8; --ok-soft:#16332A; --warn:#F5C451; --warn-soft:#352A10;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.mono{font-family:ui-monospace,"SF Mono","Cascadia Mono",Consolas,monospace;font-variant-numeric:tabular-nums}
+.wrap{max-width:720px;margin:0 auto;padding:12px 16px calc(32px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:14px}
+button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+input{font:inherit;color:var(--ink)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+h1{margin:0;font-size:15px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+h2{margin:4px 0 0;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+
+.in{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px;display:grid;grid-template-columns:1fr auto;gap:10px 12px;align-items:end}
+.in label{display:flex;flex-direction:column;gap:4px;font-size:13px;color:var(--muted)}
+.in input{padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);width:100%}
+#f{font-size:26px;font-weight:700}
+#k{width:6.5em;font-size:18px}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:4px 12px;font-size:14px;font-weight:600;color:var(--muted)}
+.chip.on{border-color:var(--accent);background:var(--accent-soft);color:var(--ink)}
+.chip small{font-weight:400;opacity:.8}
+
+.res{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.tile .lbl{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.tile .val{font-size:clamp(20px,6vw,28px);font-weight:700}
+.tile.main{border-color:var(--accent);background:var(--accent-soft)}
+.tile .sub{font-size:13px;color:var(--muted)}
+@media (max-width:480px){.res{grid-template-columns:1fr 1fr}.tile.main{grid-column:1/-1}}
+
+svg{width:100%;height:auto;display:block}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:6px}
+.card h3{margin:0;font-size:16px}
+.card p{margin:0;font-size:15px}
+.card .big{font-size:20px;font-weight:700;color:var(--ok)}
+.warn{background:var(--warn-soft);color:var(--warn);border-radius:8px;padding:8px 10px;font-size:14px}
+.warn:empty{display:none}
+ul.tips{margin:0;padding-left:1.2em;font-size:14px;color:var(--muted)}
+ul.tips b{color:var(--ink)}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:4px 8px;border-bottom:1px solid var(--line)}
+th{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+tr.hit td{background:var(--ok-soft);font-weight:700}
+.note{font-size:13px;color:var(--muted);margin:0}
+.home{display:inline-flex;align-items:center;gap:4px;color:var(--muted);text-decoration:none;font-size:14px;font-weight:600;margin-bottom:-6px}
+.home:hover{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="home" href="../">← Ham Toolkit</a>
+  <h1>Calcolatore dipolo</h1>
+
+  <div class="in">
+    <label>Frequenza (MHz)<input id="f" class="mono" type="text" inputmode="decimal" value="145,800" autocomplete="off"></label>
+    <label>Fattore k<input id="k" class="mono" type="text" inputmode="decimal" value="0,95" autocomplete="off"></label>
+  </div>
+
+  <h2>Radioamatori</h2>
+  <div class="chips" id="pHam"></div>
+  <h2>Ascolto con l'SDR</h2>
+  <div class="chips" id="pRx"></div>
+
+  <div class="res">
+    <div class="tile main"><div class="lbl">Ogni braccio (λ/4 · k)</div><div class="val mono" id="arm"></div><div class="sub">da ripetere uguale sui due lati</div></div>
+    <div class="tile"><div class="lbl">Dipolo intero (λ/2 · k)</div><div class="val mono" id="half"></div></div>
+    <div class="tile"><div class="lbl">Lunghezza d'onda λ</div><div class="val mono" id="lam"></div></div>
+  </div>
+
+  <div class="card">
+    <svg viewBox="0 0 600 110" aria-label="Schema del dipolo">
+      <line x1="40" y1="40" x2="290" y2="40" stroke="var(--accent)" stroke-width="6" stroke-linecap="round"/>
+      <line x1="310" y1="40" x2="560" y2="40" stroke="var(--accent)" stroke-width="6" stroke-linecap="round"/>
+      <rect x="286" y="30" width="28" height="20" rx="4" fill="var(--surface)" stroke="var(--muted)" stroke-width="2"/>
+      <line x1="300" y1="50" x2="300" y2="104" stroke="var(--muted)" stroke-width="4"/>
+      <text x="310" y="96" font-size="13" fill="var(--muted)" font-family="system-ui">cavo coassiale 50 Ω</text>
+      <line x1="40" y1="66" x2="290" y2="66" stroke="var(--muted)" stroke-width="1"/>
+      <line x1="40" y1="60" x2="40" y2="72" stroke="var(--muted)"/><line x1="290" y1="60" x2="290" y2="72" stroke="var(--muted)"/>
+      <text id="svgArm" x="165" y="84" text-anchor="middle" font-size="15" font-weight="700" fill="var(--ink)" font-family="system-ui"></text>
+      <line x1="40" y1="14" x2="560" y2="14" stroke="var(--muted)" stroke-width="1"/>
+      <line x1="40" y1="8" x2="40" y2="20" stroke="var(--muted)"/><line x1="560" y1="8" x2="560" y2="20" stroke="var(--muted)"/>
+      <text id="svgHalf" x="430" y="30" text-anchor="middle" font-size="13" fill="var(--muted)" font-family="system-ui"></text>
+    </svg>
+    <div class="warn" id="warn"></div>
+  </div>
+
+  <div class="card">
+    <h3>Con il dipolo del kit RTL-SDR</h3>
+    <p>Estendi <b>ciascun</b> telescopico a <span class="big mono" id="kitLen"></span> <span id="kitWhich"></span></p>
+    <p class="note">Nella base ci sono circa 2 cm di metallo che contano già come braccio: sono stati tolti dal valore sopra.
+      Bracci lunghi 23–100 cm, corti 5–13 cm (guida del kit, in <span class="mono">manuali/</span>). La misura esatta conta poco sui segnali forti, molto su quelli deboli.</p>
+    <table id="kit"><thead><tr><th>Telescopico</th><th>Sezioni aperte</th><th>Braccio visibile</th><th>Risuona a circa</th></tr></thead><tbody></tbody></table>
+    <p class="note">Tabella dalla guida ufficiale del kit; evidenziata la riga più vicina alla frequenza scelta.</p>
+    <ul class="tips" id="kitTips"></ul>
+  </div>
+
+  <div class="card">
+    <h3>Dipolo autocostruito in filo</h3>
+    <p>Taglia ogni braccio a <span class="big mono" id="wireCut"></span> <span class="note">(+5% di margine)</span></p>
+    <ul class="tips">
+      <li>Il fattore <b>k</b> reale dipende da diametro del filo, isolamento e altezza da terra: per questo si taglia un po' più lungo e si accorcia di pochi cm alla volta, uguale sui due lati.</li>
+      <li>Si misura il <b>ROS</b> (rapporto di onde stazionarie, in inglese SWR) con un rosmetro o un analizzatore d'antenna: il minimo indica la frequenza di risonanza. <b>Minimo troppo in basso → antenna troppo lunga, accorcia.</b> Troppo in alto → troppo corta.</li>
+      <li>Al centro un <b>balun 1:1</b> (o qualche spira di coassiale / ferriti) evita che la calza del cavo irradi. Un dipolo ha circa 73 Ω in spazio libero, meno se basso sul terreno: con un cavo da 50 Ω va bene così.</li>
+      <li>In trasmissione vale solo nelle bande della tua patente, con i limiti di potenza dell'Allegato 26 (vedi <span class="mono">riferimenti/</span>).</li>
+    </ul>
+  </div>
+
+  <p class="note">Formule: λ = 299,79 / f(MHz) m; dipolo a mezz'onda = λ/2 · k; braccio = λ/4 · k. Con k = 0,95 il dipolo intero è ≈ 142,5 / f(MHz) m, la regola pratica dei manuali (143/f).</p>
+</div>
+
+<script>
+/* [etichetta, MHz, nota] */
+const HAM = [
+  ["2 m",145.000,"VHF, ponti e ISS"],["70 cm",433.500,"UHF, ponti e satelliti"],
+  ["10 m",28.500,""],["15 m",21.200,""],["20 m",14.200,""],["30 m",10.125,"solo CW e digitali"],
+  ["40 m",7.100,""],["80 m",3.650,""],
+];
+const RX = [
+  ["ISS",145.800,"voce/SSTV"],["APRS",144.800,""],["Meteor-M",137.900,"satellite meteo"],["Banda aerea",125.000,"AM"],
+  ["Marina ch 16",156.800,""],["FM",98.000,"radio commerciali"],["PMR446",446.100,"libero uso"],["ADS-B",1090,"aerei"],
+];
+/* telescopici del kit: [tipo, sezioni, cm visibili, MHz di risonanza] dalla guida rtl-sdr.com */
+const KIT = [
+  ["lungo",5,100,70],["lungo",4,80,87],["lungo",3,60,115],["lungo",2,42,162],["lungo",1,23,285],
+  ["corto",4,14,445],["corto",3,11,550],["corto",2,8,720],["corto",1,5,1030],
+];
+const INNER = 2; // cm di metallo dentro la base
+
+const $ = s => document.querySelector(s);
+const num = s => parseFloat(String(s).replace(",", "."));
+const fmt = (x, d=1) => x.toLocaleString("it-IT", {minimumFractionDigits:d, maximumFractionDigits:d, useGrouping:false});
+function len(m){ // metri in formato leggibile
+  if(m >= 10) return fmt(m,2) + " m";
+  if(m >= 1) return fmt(m,3) + " m";
+  return fmt(m*100, 1) + " cm";
+}
+
+function chips(el, list){
+  el.innerHTML = list.map(([l,f,n]) => `<button class="chip" data-f="${f}">${l} <small>${n ? n+" · " : ""}${fmt(f, f<1000?3:0)}</small></button>`).join("");
+  el.addEventListener("click", e => {
+    const b = e.target.closest("[data-f]"); if(!b) return;
+    $("#f").value = fmt(+b.dataset.f, 3); calc();
+  });
+}
+chips($("#pHam"), HAM); chips($("#pRx"), RX);
+$("#kit tbody").innerHTML = KIT.map(([t,s,cm,f]) => `<tr><td>${t}</td><td>${s}</td><td class="mono">${cm} cm</td><td class="mono">${f} MHz</td></tr>`).join("");
+
+function calc(){
+  const f = num($("#f").value), k = num($("#k").value);
+  document.querySelectorAll(".chip[data-f]").forEach(b => b.classList.toggle("on", Math.abs(+b.dataset.f - f) < 1e-6));
+  if(!(f > 0) || !(k > 0.5 && k <= 1)){
+    for(const id of ["arm","half","lam","kitLen","wireCut"]) $("#"+id).textContent = "—";
+    $("#warn").textContent = !(f > 0) ? "Inserisci una frequenza in MHz." : "k deve stare tra 0,5 e 1 (tipico 0,93–0,97).";
+    return;
+  }
+  const lam = 299.792458 / f, half = lam/2*k, arm = lam/4*k;
+  $("#lam").textContent = len(lam); $("#half").textContent = len(half); $("#arm").textContent = len(arm);
+  $("#svgArm").textContent = "braccio " + len(arm); $("#svgHalf").textContent = "totale " + len(half);
+  $("#wireCut").textContent = len(arm*1.05);
+
+  // kit SDR
+  const want = arm*100 - INNER;
+  let which, tips = [];
+  if(want > 100){ which = "(oltre la lunghezza massima: aprili tutti, 100 cm)"; $("#kitLen").textContent = "100 cm"; }
+  else if(want >= 23){ which = "con i telescopici <b>lunghi</b>"; $("#kitLen").textContent = fmt(want,1) + " cm"; }
+  else if(want > 14){ which = "— cade tra i due set: usa i <b>lunghi</b> chiusi (23 cm) o i <b>corti</b> tutti aperti (13–14 cm)"; $("#kitLen").textContent = fmt(want,1) + " cm"; }
+  else if(want >= 5){ which = "con i telescopici <b>corti</b>"; $("#kitLen").textContent = fmt(want,1) + " cm"; }
+  else { which = "(sotto il minimo: corti tutti chiusi, 5 cm)"; $("#kitLen").textContent = "5 cm"; }
+  $("#kitWhich").innerHTML = which;
+  let best = 0; KIT.forEach((r,i) => { if(Math.abs(Math.log(r[3]/f)) < Math.abs(Math.log(KIT[best][3]/f))) best = i; });
+  document.querySelectorAll("#kit tbody tr").forEach((tr,i) => tr.classList.toggle("hit", i===best));
+
+  if(f < 24) tips.push("<b>Sotto i 24 MHz</b> l'RTL-SDR V3 riceve solo in <b>direct sampling</b> (Q-branch, da attivare in SDR++), con prestazioni ridotte. Il kit è troppo corto: meglio un filo lungo o un dipolo in filo.");
+  if(f >= 130 && f <= 150) tips.push("Per i <b>satelliti in orbita bassa</b> (ISS, Meteor): dipolo <b>orizzontale a V</b> con i bracci a circa 120°, allineato nord-sud. Perdi 3 dB sulla polarizzazione circolare dei satelliti ma attenui di ~20 dB i segnali terrestri che saturano la chiavetta.");
+  if(f >= 24 && !(f >= 130 && f <= 150)) tips.push("Per segnali terrestri (ponti, aerei, FM) tieni il dipolo <b>verticale</b>, possibilmente con il braccio collegato al centrale del coassiale verso l'alto.");
+  tips.push("Tieni l'antenna lontana dal portatile e fuori dalla finestra se puoi: il rumore del PC copre i segnali deboli.");
+  $("#kitTips").innerHTML = tips.map(t => `<li>${t}</li>`).join("");
+
+  const w = [];
+  if(f < 24 && arm > 5) w.push(`Ogni braccio è lungo ${len(arm)}: serve spazio (due alberi, un palo centrale) o una versione accorciata con bobine, come si fa spesso per i 40 e gli 80 m.`);
+  $("#warn").textContent = w.join(" ");
+  try { localStorage.setItem("dipolo", JSON.stringify({f: $("#f").value, k: $("#k").value})); } catch(e){}
+}
+try { const s = JSON.parse(localStorage.getItem("dipolo")||"{}"); if(s.f) $("#f").value = s.f; if(s.k) $("#k").value = s.k; } catch(e){}
+$("#f").addEventListener("input", calc);
+$("#k").addEventListener("input", calc);
+calc();
+</script>
+<script src="../pwa.js"></script>
+</body>
+</html>

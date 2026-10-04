@@ -1,0 +1,637 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#121715">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" href="../icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<title>Ruota sul ponte</title>
+<style>
+:root{
+  --bg:#F3F5F2; --surface:#FFFFFF; --ink:#1A2320; --muted:#5C6964; --line:#D9DFDB;
+  --accent:#A85A06; --accent-ink:#FFFFFF; --accent-soft:#FBEFD9;
+  --me:#1F6F54; --me-soft:#DDF1E8; --danger:#B3261E; --toast-link:#F0A847;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#121715; --surface:#1A201E; --ink:#E4EAE7; --muted:#96A39E; --line:#2D3632;
+    --accent:#F0A847; --accent-ink:#1A1206; --accent-soft:#3A2A12;
+    --me:#6FD3A8; --me-soft:#16332A; --danger:#FF8A80; --toast-link:#A85A06;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#121715; --surface:#1A201E; --ink:#E4EAE7; --muted:#96A39E; --line:#2D3632;
+  --accent:#F0A847; --accent-ink:#1A1206; --accent-soft:#3A2A12;
+  --me:#6FD3A8; --me-soft:#16332A; --danger:#FF8A80; --toast-link:#A85A06;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.mono{font-family:ui-monospace,"SF Mono","Cascadia Mono",Consolas,monospace;font-variant-numeric:tabular-nums}
+.wrap{max-width:640px;margin:0 auto;padding:12px 16px calc(32px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:14px}
+button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+button:disabled{cursor:default;opacity:.5}
+input{font:inherit;color:var(--ink)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.field{padding:11px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface);min-width:0}
+.field::placeholder{color:var(--muted)}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:8px 12px;font-weight:600}
+
+/* testata */
+.top{display:flex;align-items:center;gap:10px}
+.top h1{margin:0;font-size:15px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);white-space:nowrap}
+#ponte{flex:1;min-width:0;border:0;border-bottom:1px dashed var(--line);background:transparent;padding:4px 2px;font-weight:600}
+#ponte::placeholder{color:var(--muted);font-weight:400}
+.mebar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:14px;color:var(--muted)}
+#me{width:8.5em;padding:7px 9px;border:1px solid var(--line);border-radius:8px;background:var(--surface);text-transform:uppercase}
+#btnMe{border:0;background:var(--me);color:var(--bg);border-radius:8px;padding:7px 12px;font-weight:700}
+#btnMe.out{background:transparent;color:var(--me);border:1px solid var(--me)}
+
+/* stato: chi ha il microfono */
+.status{position:sticky;top:0;z-index:5;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px;display:grid;grid-template-columns:1fr auto;gap:4px 12px;align-items:center;box-shadow:0 6px 16px -12px rgba(0,0,0,.4)}
+.status .lbl{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+#curCall{font-size:clamp(28px,9vw,40px);font-weight:700;line-height:1.05;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#curName{color:var(--muted);font-size:14px;min-height:1.2em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#nextLine{font-size:14px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#nextLine b{color:var(--ink)}
+#meLine{grid-column:1/-1;font-size:14px;font-weight:600;color:var(--me)}
+#meLine:empty{display:none}
+#meLine.now{background:var(--me-soft);border-radius:8px;padding:6px 10px;font-size:16px}
+.ctrl{grid-row:1/4;grid-column:2;display:flex;flex-direction:column;gap:6px}
+#btnNext{background:var(--accent);color:var(--accent-ink);border:0;border-radius:12px;padding:14px 18px;font-size:18px;font-weight:700;min-width:112px}
+#btnNext:active{transform:scale(.97)}
+#btnPrev{background:transparent;border:1px solid var(--line);border-radius:10px;padding:6px 10px;font-size:14px;color:var(--muted)}
+
+/* inserimento */
+#add{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr) auto;gap:8px}
+#call{text-transform:uppercase}
+#call::placeholder{text-transform:none}
+#add button{border:0;border-radius:10px;padding:0 14px;background:var(--ink);color:var(--bg);font-weight:600}
+.qbox{grid-column:1/-1;display:flex;align-items:center;gap:6px 8px;flex-wrap:wrap;font-size:13px;color:var(--muted);min-height:1.4em}
+.qbox:empty{display:none}
+.qbox b{color:var(--ink)}
+.qbox .ok{color:var(--me)}
+.qbox button{border:1px solid var(--accent);background:var(--accent-soft);color:var(--ink);border-radius:8px;padding:3px 10px;font-weight:600}
+.hint{margin:-6px 2px 0;font-size:13px;color:var(--muted)}
+
+/* ruota */
+#list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+#list li{display:flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:4px 4px 4px 0;min-height:52px;user-select:none;-webkit-user-select:none;position:relative}
+#list li.cur{border-color:var(--accent);background:var(--accent-soft);box-shadow:inset 4px 0 0 var(--accent)}
+#list li.me .call::after{content:"TU";margin-left:6px;font:600 10px system-ui;letter-spacing:.06em;color:var(--me);border:1px solid var(--me);border-radius:4px;padding:0 4px;vertical-align:3px}
+#list.sorting li{transition:transform .16s ease}
+#list li.dragging{transition:none;z-index:4;border-color:var(--accent);box-shadow:0 14px 28px -10px rgba(0,0,0,.5);cursor:grabbing}
+#list li.flash{animation:flash .9s}
+@keyframes flash{0%,60%{background:var(--accent-soft)}}
+.handle{touch-action:none;border:0;background:transparent;color:var(--muted);width:40px;align-self:stretch;font-size:20px;line-height:1;cursor:grab;display:grid;place-items:center}
+.who{flex:1;min-width:0;padding:4px 0;background:transparent;border:0;text-align:left;display:flex;flex-direction:column}
+.call{font-size:19px;font-weight:700;letter-spacing:.02em}
+.meta{font-size:13px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.meta i{font-style:normal;color:var(--accent)}
+#list li.nocall .call{font-family:inherit;letter-spacing:0}
+.del,.edt{border:0;background:transparent;color:var(--muted);width:40px;height:44px;border-radius:8px;font-size:22px;flex:none}
+.edt{font-size:18px}
+.del:hover{color:var(--danger)}
+.edt:hover{color:var(--accent)}
+#list li.editing{padding:10px;border-color:var(--accent);border-style:dashed}
+.edit{flex:1;min-width:0;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.4fr);gap:8px}
+.edit .field{padding:9px 10px}
+.edit .acts{grid-column:1/-1;display:flex;gap:8px;justify-content:flex-end}
+.edit .save{background:var(--accent);color:var(--accent-ink);border:0;border-radius:10px;padding:8px 18px;font-weight:700}
+.edit .cancel{border:1px solid var(--line);background:transparent;border-radius:10px;padding:8px 14px}
+@media (max-width:420px){.edit{grid-template-columns:1fr}}
+.empty{text-align:center;color:var(--muted);padding:24px 8px;border:1px dashed var(--line);border-radius:10px;justify-content:center}
+
+/* impostazioni */
+footer{display:flex;flex-direction:column;gap:10px;font-size:14px;color:var(--muted)}
+details{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+summary{cursor:pointer;font-weight:600;color:var(--ink)}
+.qrzform{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.qrzform .full{grid-column:1/-1}
+.qrzform label{display:flex;align-items:center;gap:6px}
+#qrzState{grid-column:1/-1;font-size:13px}
+#qrzState.err{color:var(--danger)}
+#qrzSum{margin-left:6px;font-weight:600;color:var(--me)}
+.qrzok{display:flex;align-items:center;gap:10px;margin-top:10px;padding:10px 12px;border-radius:8px;background:var(--me-soft);color:var(--me);font-weight:600}
+.qrzok button{margin-left:auto;border:1px solid var(--me);background:transparent;color:var(--me);border-radius:8px;padding:4px 12px;font-weight:600}
+[hidden]{display:none !important}
+#btnClear{align-self:flex-end;border:1px solid var(--line);background:transparent;border-radius:8px;padding:6px 12px;color:var(--danger)}
+
+/* annulla */
+#toast{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom));transform:translate(-50%,150%);transition:transform .2s;background:var(--ink);color:var(--bg);border-radius:10px;padding:10px 12px 10px 16px;display:flex;gap:14px;align-items:center;max-width:calc(100% - 32px);font-size:15px;z-index:10}
+#toast.show{transform:translate(-50%,0)}
+#toast button{border:0;background:transparent;color:var(--toast-link);font-weight:700;padding:4px 6px}
+@media (max-width:420px){#add{grid-template-columns:minmax(0,1fr) minmax(0,1fr)} #add button{grid-column:1/-1;padding:10px}}
+.home{display:inline-flex;align-items:center;gap:4px;color:var(--muted);text-decoration:none;font-size:14px;font-weight:600;margin-bottom:-6px}
+.home:hover{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="home" href="../">← Ham Toolkit</a>
+  <div class="top">
+    <h1>Ruota</h1>
+    <input id="ponte" placeholder="Ponte (es. R5a Campo dei Fiori)" autocomplete="off" aria-label="Nome del ponte">
+  </div>
+  <div class="mebar">
+    <label for="me">Io</label>
+    <input id="me" class="mono" placeholder="Nominativo" spellcheck="false" autocapitalize="characters" autocomplete="off" aria-label="Il mio nominativo">
+    <button id="btnMe" type="button">Entra in ruota</button>
+  </div>
+
+  <section class="status" aria-live="polite">
+    <span class="lbl">In aria · giro <span id="giro" class="mono">1</span></span>
+    <div id="curCall" class="mono">—</div>
+    <div id="curName"></div>
+    <div id="nextLine"></div>
+    <div id="meLine"></div>
+    <div class="ctrl">
+      <button id="btnNext" type="button" title="Passa al prossimo">Passa ▶</button>
+      <button id="btnPrev" type="button" title="Torna al precedente">◀ indietro</button>
+    </div>
+  </section>
+
+  <form id="add" autocomplete="off">
+    <input id="call" class="field mono" placeholder="Nominativo" autocapitalize="characters" spellcheck="false" enterkeyhint="next" aria-label="Nominativo">
+    <input id="name" class="field" placeholder="Nome e cognome" autocapitalize="words" enterkeyhint="done" aria-label="Nome">
+    <button type="submit">Aggiungi</button>
+    <div id="qrzBox" class="qbox" aria-live="polite"></div>
+  </form>
+  <p class="hint">Senza nominativo? Scrivi solo il nome e aggiungilo dopo con ✎ · tocca una stazione per darle il turno · trascina ⠿ per riordinare.</p>
+
+  <ol id="list"></ol>
+
+  <footer>
+    <details id="qrzPanel">
+      <summary>Nomi da QRZ.com<span id="qrzSum"></span></summary>
+      <div id="qrzOk" class="qrzok" hidden><span id="qrzOkTxt"></span><button id="btnQrzOut" type="button">Esci</button></div>
+      <div id="qrzForm" class="qrzform">
+        <input id="qrzUser" class="field mono" placeholder="Utente QRZ" autocomplete="username" autocapitalize="characters" spellcheck="false" aria-label="Utente QRZ">
+        <input id="qrzPass" class="field" type="password" placeholder="Password QRZ" autocomplete="current-password" aria-label="Password QRZ">
+        <label class="full"><input id="qrzRemember" type="checkbox"> Ricorda la password su questo dispositivo</label>
+        <button id="btnQrz" class="btn full" type="button">Accedi</button>
+        <span id="qrzState"></span>
+      </div>
+    </details>
+    <button id="btnClear" type="button">Nuova ruota</button>
+  </footer>
+</div>
+
+<div id="toast" role="status"><span id="toastMsg"></span><button id="toastUndo" type="button">Annulla</button></div>
+
+<script>
+const KEY = 'ruota-ponte-v1', QKEY = 'ruota-ponte-qrz', CKEY = 'ruota-ponte-qrzcache';
+const QRZ_URL = 'https://xmldata.qrz.com/xml/current/';
+const $ = id => document.getElementById(id);
+const blank = () => ({ list: [], cur: null, me: '', ponte: '', giro: 1 });
+
+function readJSON(k) { try { return JSON.parse(localStorage.getItem(k)); } catch (e) { return null; } }
+function writeJSON(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+
+let S = (() => { const v = readJSON(KEY); return v && Array.isArray(v.list) ? Object.assign(blank(), v) : blank(); })();
+let Q = Object.assign({ user: '', pass: '', remember: false, key: '' }, readJSON(QKEY) || {});
+let cache = readJSON(CKEY) || {};
+const save = () => writeJSON(KEY, S);
+const saveQ = () => writeJSON(QKEY, Q.remember ? Q : { user: Q.user, remember: false, key: Q.key });
+
+const utcNow = () => new Date().toISOString().slice(11, 16);
+const norm = s => s.trim().toUpperCase().replace(/\s+/g, '');
+const idx = id => S.list.findIndex(x => x.id === id);
+const titleCase = s => s.toLowerCase().replace(/(^|[\s'’-])(\p{L})/gu, (m, a, b) => a + b.toUpperCase());
+/* nominativo "base" per la ricerca: da HB9/IZ2XYZ/P prende IZ2XYZ */
+const CALL_RE = /^[A-Z0-9]{1,3}[0-9][A-Z0-9]{0,3}[A-Z]$/;
+function baseCall(c) {
+  const parts = c.split('/').filter(p => CALL_RE.test(p));
+  return parts.sort((a, b) => b.length - a.length)[0] || '';
+}
+
+/* ================= QRZ ================= */
+function qrzParse(text) {
+  const doc = new DOMParser().parseFromString(text, 'application/xml');
+  const get = (node, tag) => { const el = node && node.getElementsByTagName(tag)[0]; return el ? el.textContent.trim() : ''; };
+  const sess = doc.getElementsByTagName('Session')[0];
+  const cs = doc.getElementsByTagName('Callsign')[0];
+  return {
+    key: get(sess, 'Key'), error: get(sess, 'Error'),
+    rec: cs ? { fname: get(cs, 'fname'), name: get(cs, 'name'), grid: get(cs, 'grid'), country: get(cs, 'country') } : null
+  };
+}
+async function qrzLogin() {
+  if (!Q.user || !Q.pass) throw new Error('login');
+  const r = await fetch(QRZ_URL + '?username=' + encodeURIComponent(Q.user) + ';password=' + encodeURIComponent(Q.pass) + ';agent=ruota-ponte-1');
+  const p = qrzParse(await r.text());
+  if (!p.key) throw new Error(p.error || 'Accesso non riuscito');
+  Q.key = p.key; saveQ();
+  return p.key;
+}
+async function qrzLookup(call, retry = true) {
+  if (cache[call] && Date.now() - cache[call].at < 30 * 864e5) return cache[call];
+  if (!Q.key) await qrzLogin();
+  const r = await fetch(QRZ_URL + '?s=' + encodeURIComponent(Q.key) + ';callsign=' + encodeURIComponent(call));
+  const p = qrzParse(await r.text());
+  if (p.rec) {
+    const full = titleCase([p.rec.fname, p.rec.name].filter(Boolean).join(' '));
+    const res = { first: titleCase(p.rec.fname.split(/\s+/)[0] || ''), full, grid: p.rec.grid, at: Date.now() };
+    cache[call] = res; writeJSON(CKEY, cache);
+    return res;
+  }
+  if (/not found/i.test(p.error)) return null;
+  if (retry && /session|invalid|timeout/i.test(p.error)) { Q.key = ''; await qrzLogin(); return qrzLookup(call, false); }
+  throw new Error(p.error || 'Risposta QRZ non valida');
+}
+const qrzReady = () => !!(Q.key || (Q.user && Q.pass));
+const words = s => (s || '').toLowerCase().split(/\s+/).filter(Boolean);
+const sameName = (typed, full) => { const q = words(full); return words(typed).length > 0 && words(typed).every(w => q.includes(w)); };
+/* nome da mostrare: sempre con il cognome quando QRZ lo conosce e il nome scritto è compatibile */
+const shownName = st => !st.qrz ? (st.name || '') : (!st.name || sameName(st.name, st.qrz)) ? st.qrz : st.name;
+const label = st => st.call || shownName(st);
+
+/* ================= nome proposto da QRZ =================
+   Usato sia dal modulo "Aggiungi" sia dalla modifica di una card.
+   - nome vuoto (o compilato da QRZ): si compila da solo con nome e cognome
+   - nome scritto a mano: non si tocca, si mostra il confronto e un bottone per consolidare */
+const txt = (s, cls) => { const e = document.createElement(cls === 'b' ? 'b' : 'span'); if (cls && cls !== 'b') e.className = cls; e.textContent = s; return e; };
+
+function makeAssist(callEl, nameEl, boxEl) {
+  const A = { manual: !!nameEl.value.trim(), seq: 0, timer: null, proposal: null };
+  const show = parts => { boxEl.textContent = ''; parts.forEach(x => boxEl.append(x)); };
+  const useBtn = (res, text) => {
+    const b = document.createElement('button');
+    b.type = 'button'; b.textContent = text;
+    b.addEventListener('click', () => { nameEl.value = res.full; A.manual = false; show([txt('✓ Nome da QRZ', 'ok')]); nameEl.focus(); });
+    return b;
+  };
+  A.onCall = () => {
+    A.proposal = null;
+    clearTimeout(A.timer);
+    const call = baseCall(norm(callEl.value));
+    if (!call) { boxEl.textContent = ''; if (!A.manual) nameEl.value = ''; return; }
+    if (!qrzReady()) { boxEl.textContent = ''; return; }
+    A.timer = setTimeout(() => A.run(call), 450);
+  };
+  A.run = async call => {
+    const seq = ++A.seq;
+    show([txt('QRZ: cerco ' + call + '…')]);
+    try {
+      const res = await qrzLookup(call);
+      if (seq !== A.seq) return;
+      if (!res) { show([txt('QRZ: ' + call + ' non trovato')]); return; }
+      A.proposal = res;
+      const typed = nameEl.value.trim();
+      if (!A.manual || !typed) {
+        nameEl.value = res.full; A.manual = false;
+        show([txt('✓ Nome da QRZ', 'ok')]);
+      } else if (typed.toLowerCase() === res.full.toLowerCase()) {
+        show([txt('✓ coincide con QRZ', 'ok')]);
+      } else if (sameName(typed, res.full)) {
+        show([txt('✓ coincide con QRZ: ', 'ok'), txt(res.full, 'b'), useBtn(res, 'Usa nome completo')]);
+      } else {
+        show([txt('Hai scritto '), txt(typed, 'b'), txt(' · QRZ dice '), txt(res.full, 'b'), useBtn(res, 'Usa ' + res.full)]);
+      }
+    } catch (err) {
+      if (seq !== A.seq) return;
+      if (err.message === 'login') { Q.key = ''; saveQ(); renderQrz(); }
+      show([txt(err.message === 'login' ? 'QRZ: inserisci utente e password in fondo alla pagina' : (navigator.onLine ? 'QRZ: ' + err.message : 'QRZ: sei offline, scrivi il nome a mano'))]);
+    }
+  };
+  A.onName = () => {
+    A.manual = !!nameEl.value.trim();
+    if (A.proposal && A.manual) A.run(baseCall(norm(callEl.value)));
+  };
+  A.reset = () => { A.manual = false; A.proposal = null; A.seq++; clearTimeout(A.timer); boxEl.textContent = ''; };
+  callEl.addEventListener('input', A.onCall);
+  nameEl.addEventListener('input', A.onName);
+  return A;
+}
+
+/* ================= modifica di una stazione ================= */
+let editing = { id: null, call: '', name: '' };   // bozza: sopravvive ai render durante la modifica
+
+function startEdit(st) {
+  editing = { id: st.id, call: st.call, name: st.name || (st.call ? '' : '') };
+  render();
+  const f = document.querySelector('#list li.editing input[name="' + (st.call ? 'name' : 'call') + '"]');
+  if (f) { f.focus(); f.select(); }
+}
+function stopEdit() { editing = { id: null, call: '', name: '' }; render(); }
+
+function editForm(st) {
+  const f = document.createElement('form');
+  f.className = 'edit'; f.autocomplete = 'off';
+  const ci = document.createElement('input');
+  ci.name = 'call'; ci.className = 'field mono'; ci.id = 'edCall'; ci.placeholder = 'Nominativo';
+  ci.autocapitalize = 'characters'; ci.spellcheck = false; ci.style.textTransform = 'uppercase';
+  ci.setAttribute('aria-label', 'Nominativo'); ci.value = editing.call;
+  const ni = document.createElement('input');
+  ni.name = 'name'; ni.className = 'field'; ni.placeholder = 'Nome e cognome';
+  ni.autocapitalize = 'words'; ni.setAttribute('aria-label', 'Nome'); ni.value = editing.name;
+  const box = document.createElement('div'); box.className = 'qbox'; box.setAttribute('aria-live', 'polite');
+  const acts = document.createElement('div'); acts.className = 'acts';
+  const cancel = document.createElement('button'); cancel.type = 'button'; cancel.className = 'cancel'; cancel.textContent = 'Annulla';
+  const ok = document.createElement('button'); ok.type = 'submit'; ok.className = 'save'; ok.textContent = 'Salva';
+  acts.append(cancel, ok);
+  f.append(ci, ni, box, acts);
+
+  const A = makeAssist(ci, ni, box);
+  A.manual = !!editing.name;
+  ci.addEventListener('input', () => { editing.call = ci.value; });
+  ni.addEventListener('input', () => { editing.name = ni.value; });
+  /* all'apertura confronta subito il nome con QRZ, se il nominativo c'è già */
+  if (baseCall(norm(ci.value))) setTimeout(() => A.onCall(), 0);
+
+  cancel.addEventListener('click', stopEdit);
+  f.addEventListener('keydown', e => { if (e.key === 'Escape') { e.preventDefault(); stopEdit(); } });
+  f.addEventListener('submit', e => {
+    e.preventDefault();
+    const call = norm(ci.value), name = ni.value.trim();
+    if (!call && !name) { box.textContent = 'Serve almeno un nome o un nominativo.'; ci.focus(); return; }
+    const dup = call && S.list.find(x => x.call === call && x.id !== st.id);
+    if (dup) { box.textContent = call + ' è già in ruota.'; flash(dup.id); return; }
+    if (call !== st.call) {
+      delete st.qrz; delete st.grid;
+      const known = call && cache[baseCall(call)];
+      if (known) { st.qrz = known.full; if (known.grid) st.grid = known.grid; }
+    }
+    st.call = call; st.name = name;
+    editing = { id: null, call: '', name: '' };
+    save(); render();
+    if (call && !st.qrz) enrichLater(st);
+  });
+  return f;
+}
+
+/* dopo "Aggiungi": se QRZ risponde più tardi, completa la stazione già in ruota */
+async function enrichLater(st) {
+  const call = baseCall(st.call);
+  if (!call || !qrzReady()) return;
+  try {
+    const res = await qrzLookup(call);
+    const cur = S.list.find(x => x.id === st.id);
+    if (!res || !cur) return;
+    cur.qrz = res.full;
+    if (res.grid) cur.grid = res.grid;
+    save(); render();
+  } catch (e) {}
+}
+
+/* ================= rendering ================= */
+function render() {
+  const ul = $('list');
+  ul.textContent = '';
+  if (!S.list.length) {
+    const li = document.createElement('li');
+    li.className = 'empty';
+    li.textContent = 'Nessuna stazione. Aggiungi chi entra in ruota, nell\'ordine dei passaggi.';
+    ul.append(li);
+  }
+  S.list.forEach((st, i) => {
+    const li = document.createElement('li');
+    li.dataset.id = st.id;
+    if (st.id === S.cur) li.classList.add('cur');
+    if (S.me && st.call === S.me) li.classList.add('me');
+    if (!st.call) li.classList.add('nocall');
+
+    const h = document.createElement('button');
+    h.className = 'handle'; h.type = 'button'; h.textContent = '⠿';
+    h.setAttribute('aria-label', 'Trascina per spostare ' + label(st) + ' (o frecce su/giù)');
+    h.addEventListener('pointerdown', startDrag);
+    h.addEventListener('keydown', keyMove);
+
+    const who = document.createElement('button');
+    who.className = 'who'; who.type = 'button';
+    who.setAttribute('aria-label', 'Dai il turno a ' + label(st));
+    const c = document.createElement('span'); c.className = 'call mono'; c.textContent = label(st);
+    const m = document.createElement('span'); m.className = 'meta';
+    m.append([st.call ? shownName(st) : 'senza nominativo', st.grid].filter(Boolean).join(' · '));
+    if (st.qrz && st.name && !sameName(st.name, st.qrz)) {
+      const q = document.createElement('i'); q.textContent = ' · QRZ: ' + st.qrz; m.append(q);
+    }
+    who.append(c, m);
+    who.addEventListener('click', () => { S.cur = st.id; save(); render(); });
+
+    const d = document.createElement('button');
+    d.className = 'del'; d.type = 'button'; d.textContent = '×';
+    d.setAttribute('aria-label', 'Togli ' + label(st));
+    d.addEventListener('click', () => remove(st.id));
+
+    if (st.id === editing.id) {
+      li.classList.add('editing');
+      li.append(editForm(st));
+    } else {
+      const ed = document.createElement('button');
+      ed.className = 'edt'; ed.type = 'button'; ed.textContent = '✎';
+      ed.setAttribute('aria-label', 'Modifica ' + label(st));
+      ed.addEventListener('click', () => startEdit(st));
+      li.append(h, who, ed, d);
+    }
+    ul.append(li);
+  });
+  renderStatus();
+}
+
+function renderStatus() {
+  const L = S.list, i = idx(S.cur);
+  const cur = L[i];
+  $('giro').textContent = S.giro;
+  $('curCall').textContent = cur ? label(cur) : '—';
+  $('curCall').classList.toggle('mono', !cur || !!cur.call);
+  $('curName').textContent = cur ? (cur.call ? shownName(cur) : 'senza nominativo') : (L.length ? 'Tocca chi sta parlando, o premi Passa' : '');
+  const next = L.length > 1 && i >= 0 ? L[(i + 1) % L.length] : null;
+  const nl = $('nextLine'); nl.textContent = '';
+  if (next) {
+    nl.append('Poi: '); const b = document.createElement('b'); if (next.call) b.className = 'mono'; b.textContent = label(next); nl.append(b);
+    const nn = next.call ? shownName(next) : ''; if (nn) nl.append(' · ' + nn);
+  }
+  const meI = L.findIndex(x => x.call === S.me);
+  const ml = $('meLine');
+  ml.className = ''; ml.textContent = '';
+  if (meI >= 0 && i >= 0) {
+    const k = (meI - i + L.length) % L.length;
+    if (k === 0) { ml.textContent = '🎙 Tocca a te'; ml.className = 'now'; }
+    else ml.textContent = k === 1 ? 'Sei il prossimo' : 'Tocca a te tra ' + k + ' passaggi';
+  }
+  const inRuota = meI >= 0;
+  $('btnMe').textContent = inRuota ? 'Esci dalla ruota' : 'Entra in ruota';
+  $('btnMe').classList.toggle('out', inRuota);
+  $('btnMe').disabled = !S.me;
+  $('btnNext').disabled = !L.length;
+}
+
+/* ================= azioni ================= */
+function add(call, name) {
+  call = norm(call); name = name.trim();
+  if (!call && !name) return null;
+  const dup = call ? S.list.find(x => x.call === call) : S.list.find(x => !x.call && x.name.toLowerCase() === name.toLowerCase());
+  if (dup) { flash(dup.id); return null; }
+  const st = { id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), call, name, t: utcNow() };
+  const known = call && cache[baseCall(call)];
+  if (known) { st.qrz = known.full; if (known.grid) st.grid = known.grid; }
+  S.list.push(st);
+  if (!S.cur) S.cur = st.id;
+  save(); render();
+  if (call && !st.qrz) enrichLater(st);
+  return st;
+}
+
+let undo = null, toastTimer = null;
+function remove(id) {
+  const i = idx(id);
+  if (i < 0) return;
+  const [st] = S.list.splice(i, 1);
+  const wasCur = S.cur === id;
+  if (wasCur) S.cur = S.list.length ? S.list[i % S.list.length].id : null;
+  undo = { st, i, wasCur };
+  save(); render();
+  $('toastMsg').textContent = label(st) + ' tolto dalla ruota';
+  $('toast').classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { $('toast').classList.remove('show'); undo = null; }, 5000);
+}
+$('toastUndo').addEventListener('click', () => {
+  if (!undo) return;
+  S.list.splice(undo.i, 0, undo.st);
+  if (undo.wasCur) S.cur = undo.st.id;
+  undo = null; save(); render();
+  $('toast').classList.remove('show');
+});
+
+function step(dir) {
+  const L = S.list;
+  if (!L.length) return;
+  const i = idx(S.cur);
+  if (i < 0) { S.cur = L[0].id; save(); render(); return; }
+  let j = i + dir;
+  if (j >= L.length) { j = 0; S.giro++; }
+  if (j < 0) { j = L.length - 1; S.giro = Math.max(1, S.giro - 1); }
+  S.cur = L[j].id;
+  save(); render();
+}
+
+function flash(id) {
+  const li = document.querySelector('#list li[data-id="' + id + '"]');
+  if (!li) return;
+  li.classList.remove('flash'); void li.offsetWidth; li.classList.add('flash');
+  li.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+}
+
+/* ================= trascinamento =================
+   La card segue il dito/cursore (transform), le altre scivolano per farle spazio.
+   Il DOM non cambia durante il trascinamento: si riordina solo al rilascio. */
+function startDrag(e) {
+  if (e.button > 0) return;
+  e.preventDefault();
+  const ul = $('list'), li = e.currentTarget.closest('li');
+  const items = [...ul.children];
+  const from = items.indexOf(li);
+  const gap = parseFloat(getComputedStyle(ul).rowGap) || 6;
+  const size = li.getBoundingClientRect().height + gap;
+  const mids = items.map(it => { const r = it.getBoundingClientRect(); return r.top + scrollY + r.height / 2; });
+  const startY = e.clientY + scrollY;
+  const pid = e.pointerId;
+  let clientY = e.clientY, to = from, raf = null;
+
+  ul.classList.add('sorting');
+  li.classList.add('dragging');
+
+  const update = () => {
+    raf = null;
+    const edge = 70, vh = window.innerHeight;
+    if (clientY < edge) window.scrollBy(0, -Math.ceil((edge - clientY) / 5));
+    else if (clientY > vh - edge) window.scrollBy(0, Math.ceil((clientY - (vh - edge)) / 5));
+    const dy = clientY + scrollY - startY;
+    li.style.transform = 'translateY(' + dy + 'px) scale(1.02)';
+    const center = mids[from] + dy;
+    to = from;
+    for (let k = 0; k < from; k++) if (center < mids[k]) { to = k; break; }
+    for (let k = items.length - 1; k > from; k--) if (center > mids[k]) { to = k; break; }
+    items.forEach((it, k) => {
+      if (k === from) return;
+      const shift = (from < k && k <= to) ? -size : (to <= k && k < from) ? size : 0;
+      it.style.transform = shift ? 'translateY(' + shift + 'px)' : '';
+    });
+    if (clientY < edge || clientY > vh - edge) raf = requestAnimationFrame(update);
+  };
+  const move = ev => { if (ev.pointerId !== pid) return; ev.preventDefault(); clientY = ev.clientY; if (!raf) raf = requestAnimationFrame(update); };
+  const end = ev => {
+    if (ev.pointerId !== pid) return;
+    window.removeEventListener('pointermove', move);
+    window.removeEventListener('pointerup', end);
+    window.removeEventListener('pointercancel', end);
+    if (raf) cancelAnimationFrame(raf);
+    if (to !== from) { const [st] = S.list.splice(from, 1); S.list.splice(to, 0, st); save(); }
+    render();
+  };
+  window.addEventListener('pointermove', move, { passive: false });
+  window.addEventListener('pointerup', end);
+  window.addEventListener('pointercancel', end);
+}
+
+/* riordino da tastiera: frecce su/giù sulla maniglia */
+function keyMove(e) {
+  if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return;
+  e.preventDefault();
+  const id = e.currentTarget.closest('li').dataset.id, i = idx(id);
+  const j = i + (e.key === 'ArrowUp' ? -1 : 1);
+  if (j < 0 || j >= S.list.length) return;
+  const [st] = S.list.splice(i, 1); S.list.splice(j, 0, st);
+  save(); render();
+  document.querySelector('#list li[data-id="' + id + '"] .handle').focus();
+}
+
+/* ================= eventi ================= */
+const mainAssist = makeAssist($('call'), $('name'), $('qrzBox'));
+$('add').addEventListener('submit', e => {
+  e.preventDefault();
+  if (!norm($('call').value) && !$('name').value.trim()) { $('call').focus(); return; }
+  add($('call').value, $('name').value);
+  $('call').value = ''; $('name').value = ''; mainAssist.reset();
+  $('call').focus();
+});
+$('call').addEventListener('keydown', e => { if (e.key === 'Enter' && !$('name').value) { e.preventDefault(); $('name').focus(); } });
+
+$('btnNext').addEventListener('click', () => step(1));
+$('btnPrev').addEventListener('click', () => step(-1));
+$('ponte').value = S.ponte;
+$('ponte').addEventListener('input', e => { S.ponte = e.target.value; save(); });
+$('me').value = S.me;
+$('me').addEventListener('input', e => { S.me = norm(e.target.value); save(); render(); if (!Q.user && !Q.key) $('qrzUser').value = S.me; });
+$('btnMe').addEventListener('click', () => {
+  const mine = S.list.find(x => x.call === S.me);
+  if (mine) remove(mine.id); else add(S.me, '');
+});
+$('btnClear').addEventListener('click', () => {
+  if (S.list.length && !confirm('Svuotare la ruota? Il nome del ponte resta.')) return;
+  S.list = []; S.cur = null; S.giro = 1; save(); render();
+});
+
+/* pannello QRZ */
+function renderQrz(msg, isErr) {
+  const ok = !!Q.key && !msg;
+  $('qrzOk').hidden = !ok; $('qrzForm').hidden = ok;
+  $('qrzSum').textContent = ok ? '· ✓ collegato' : '';
+  $('qrzOkTxt').textContent = '✓ Collegato a QRZ come ' + Q.user;
+  $('qrzUser').value = Q.user || S.me; $('qrzPass').value = Q.pass || '';
+  $('qrzRemember').checked = !!Q.remember;
+  $('qrzState').className = isErr ? 'err' : '';
+  $('qrzState').textContent = msg || 'Basta un account gratuito su qrz.com: anche senza abbonamento restituisce nome e cognome.';
+}
+$('btnQrzOut').addEventListener('click', () => { Q.key = ''; Q.pass = ''; saveQ(); renderQrz(); $('qrzPanel').open = true; });
+$('btnQrz').addEventListener('click', async () => {
+  Q.user = norm($('qrzUser').value); Q.pass = $('qrzPass').value; Q.remember = $('qrzRemember').checked; Q.key = '';
+  renderQrz('Accesso in corso…');
+  try { await qrzLogin(); renderQrz(); mainAssist.onCall(); }
+  catch (err) { saveQ(); renderQrz(err.message === 'login' ? 'Inserisci utente e password' : 'Errore: ' + err.message, true); }
+});
+$('qrzRemember').addEventListener('change', e => { Q.remember = e.target.checked; saveQ(); });
+if (!Q.key) $('qrzPanel').open = true;
+
+renderQrz();
+render();
+</script>
+<script src="../pwa.js"></script>
+</body>
+</html>

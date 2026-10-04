@@ -414,3 +414,16 @@ kbd {
     padding: 18px 16px;
   }
 }
+
+/* ---- Link a Ham Toolkit ---- */
+.brand .home {
+  color: var(--text-dim);
+  text-decoration: none;
+  font-size: 18px;
+  line-height: 1;
+  padding: 6px 8px;
+  margin-left: -8px;
+  border-radius: 7px;
+  transition: color .15s, background .15s;
+}
+.brand .home:hover { color: var(--accent); background: var(--bg-soft); }

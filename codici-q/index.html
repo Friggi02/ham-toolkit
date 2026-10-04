@@ -1,0 +1,507 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#121715">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="icon" href="../icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+<title>Codici Q e gergo</title>
+<style>
+:root{
+  --bg:#F3F5F2; --surface:#FFFFFF; --ink:#1A2320; --muted:#5C6964; --line:#D9DFDB;
+  --accent:#A85A06; --accent-ink:#FFFFFF; --accent-soft:#FBEFD9;
+  --ok:#1F6F54; --ok-soft:#DDF1E8; --danger:#B3261E; --danger-soft:#FBE3E1;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#121715; --surface:#1A201E; --ink:#E4EAE7; --muted:#96A39E; --line:#2D3632;
+    --accent:#F0A847; --accent-ink:#1A1206; --accent-soft:#3A2A12;
+    --ok:#6FD3A8; --ok-soft:#16332A; --danger:#FF8A80; --danger-soft:#3A1C1A;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#121715; --surface:#1A201E; --ink:#E4EAE7; --muted:#96A39E; --line:#2D3632;
+  --accent:#F0A847; --accent-ink:#1A1206; --accent-soft:#3A2A12;
+  --ok:#6FD3A8; --ok-soft:#16332A; --danger:#FF8A80; --danger-soft:#3A1C1A;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.mono{font-family:ui-monospace,"SF Mono","Cascadia Mono",Consolas,monospace}
+.wrap{max-width:720px;margin:0 auto;padding:12px 16px calc(32px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:14px}
+button{font:inherit;color:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+input{font:inherit;color:var(--ink)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+[hidden]{display:none !important}
+
+/* testata e navigazione */
+.top{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.top h1{margin:0;font-size:15px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);white-space:nowrap;margin-right:auto}
+nav{display:flex;gap:4px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:3px}
+nav a{padding:6px 14px;border-radius:8px;text-decoration:none;color:var(--muted);font-weight:600;font-size:14px}
+nav a.on{background:var(--accent);color:var(--accent-ink)}
+
+/* barra filtri */
+.bar{position:sticky;top:0;z-index:5;background:var(--bg);padding:6px 0;display:flex;flex-direction:column;gap:8px}
+#q{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--surface);font-size:17px}
+#q::placeholder{color:var(--muted)}
+.chips{display:flex;gap:6px;flex-wrap:wrap;align-items:center;font-size:14px;color:var(--muted)}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:4px 12px;font-size:14px;font-weight:600;color:var(--muted)}
+.chip.on{border-color:var(--accent);background:var(--accent-soft);color:var(--ink)}
+#count{margin-left:auto}
+
+/* elenco */
+#list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+#list li{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:grid;grid-template-columns:64px 1fr;gap:2px 12px}
+.code{grid-row:1/5;overflow-wrap:anywhere;font-size:22px;font-weight:700;color:var(--accent);letter-spacing:.03em}
+.code small{display:block;font:600 10px system-ui;letter-spacing:.06em;color:var(--muted);text-transform:uppercase;margin-top:2px}
+.qd,.qr{font-size:15px}
+.qd b,.qr b{display:inline-block;width:1.4em;color:var(--muted);font-weight:600}
+.ham{font-size:14px;color:var(--ok);margin-top:2px}
+.ham::before{content:"Uso ham: ";font-weight:700}
+mark{background:var(--accent-soft);color:inherit;border-radius:3px;padding:0 1px}
+.empty{text-align:center;color:var(--muted);padding:24px 8px;border:1px dashed var(--line);border-radius:10px}
+.note{font-size:13px;color:var(--muted)}
+
+/* flashcard */
+.opts{display:flex;flex-direction:column;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:14px}
+.opts .row{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.opts .row > span{width:5.5em;color:var(--muted)}
+.prog{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--muted)}
+.prog .track{flex:1;height:6px;border-radius:3px;background:var(--line);overflow:hidden}
+.prog .fill{height:100%;background:var(--accent);width:0;transition:width .2s}
+.prog .ok{color:var(--ok);font-weight:700}
+.prog .ko{color:var(--danger);font-weight:700}
+.fcard{min-height:280px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:22px 20px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;cursor:pointer;user-select:none;-webkit-user-select:none;box-shadow:0 10px 24px -18px rgba(0,0,0,.5)}
+.fcard .side{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.fcard .big{font-size:clamp(44px,14vw,72px);font-weight:700;color:var(--accent);letter-spacing:.04em;line-height:1}
+.fcard .txt{font-size:18px;max-width:34em}
+.fcard .txt .qd,.fcard .txt .qr{font-size:17px;text-align:left}
+.fcard hr{width:60%;border:0;border-top:1px dashed var(--line);margin:4px 0}
+.fcard .tap{font-size:13px;color:var(--muted)}
+.fcard.done{cursor:default}
+.acts{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.acts button{border:0;border-radius:12px;padding:14px;font-size:17px;font-weight:700}
+#btnKo{background:var(--danger-soft);color:var(--danger)}
+#btnOk{background:var(--ok-soft);color:var(--ok)}
+#btnFlip{grid-column:1/-1;background:var(--accent);color:var(--accent-ink)}
+#abc{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden;font-size:15px}
+#abc th,#abc td{padding:6px 10px;border-bottom:1px solid var(--line);text-align:left}
+#abc th{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+#abc td:first-child{font-weight:700;color:var(--accent);width:2.5em}
+#abc td.pr{color:var(--muted);font-size:14px}
+#abc td.it{color:var(--muted)}
+#acard .spell{font-size:clamp(20px,5.5vw,26px);font-weight:600;line-height:1.35}
+#acard .spell span{white-space:nowrap}
+#acard .big{font-size:clamp(36px,11vw,60px)}
+.two{display:flex;gap:8px}
+.two button{flex:1;border:0;border-radius:12px;padding:14px;font-size:17px;font-weight:700}
+#aFlip{background:var(--accent);color:var(--accent-ink)}
+#aNew{background:var(--surface);border:1px solid var(--line) !important}
+h2{margin:6px 0 0;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+#btnRestart{border:1px solid var(--line);background:transparent;border-radius:10px;padding:8px 14px;font-weight:600}
+.home{display:inline-flex;align-items:center;gap:4px;color:var(--muted);text-decoration:none;font-size:14px;font-weight:600;margin-bottom:-6px}
+.home:hover{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <a class="home" href="../">← Ham Toolkit</a>
+  <div class="top">
+    <h1>Codici Q</h1>
+    <nav>
+      <a href="#elenco" id="navList">Elenco</a>
+      <a href="#flashcard" id="navCards">Flashcard</a>
+      <a href="#alfabeto" id="navAbc">Alfabeto</a>
+    </nav>
+  </div>
+
+  <!-- ================= ELENCO ================= -->
+  <section id="pageList">
+    <div class="bar">
+      <input id="q" type="search" placeholder="Cerca codice, abbreviazione o definizione (es. QTH, 73, potenza…)" autocomplete="off" spellcheck="false">
+      <div class="chips" id="listChips">
+        <button class="chip on" data-set="all">Tutti</button>
+        <button class="chip" data-set="top">Più usati</button>
+        <button class="chip" data-set="aero">Aeronautici</button>
+        <button class="chip" data-set="slang">Gergo ham</button>
+        <button class="chip" data-set="cw">Abbreviazioni</button>
+        <span id="count"></span>
+      </div>
+    </div>
+    <ul id="list"></ul>
+    <p class="note">
+      <b>D</b> = forma di domanda (codice seguito da «?»), <b>R</b> = forma di risposta/affermazione.
+      Fonte: Raccomandazione ITU-R M.1172 (serie QRA–QUZ, servizio marittimo/generale) e ICAO Doc 8400 per i codici aeronautici.
+      Le <b>abbreviazioni</b> nascono dal CW (Morse) ma si sentono anche in fonia (73, QSL, DX).
+      Il «gergo ham» non è definito dall'ITU: è uso consolidato tra radioamatori. In fonia i codici Q si usano come sostantivi («il mio QTH», «facciamo QSY»).
+    </p>
+  </section>
+
+  <!-- ================= FLASHCARD ================= -->
+  <section id="pageCards" hidden>
+    <div class="opts">
+      <div class="row"><span>Direzione</span>
+        <button class="chip on" data-dir="c2d">Codice → significato</button>
+        <button class="chip" data-dir="d2c">Significato → codice</button>
+        <button class="chip" data-dir="mix">Misto</button>
+      </div>
+      <div class="row"><span>Mazzo</span>
+        <button class="chip on" data-deck="top">Q più usati</button>
+        <button class="chip" data-deck="std">Tutti i Q ITU</button>
+        <button class="chip" data-deck="cw">Abbreviazioni</button>
+        <button class="chip" data-deck="all">Tutto</button>
+      </div>
+    </div>
+    <div class="prog">
+      <span id="pNum"></span>
+      <div class="track"><div class="fill" id="pFill"></div></div>
+      <span class="ok" id="pOk">0</span>/<span class="ko" id="pKo">0</span>
+    </div>
+    <div id="card" class="fcard" tabindex="0"></div>
+    <div class="acts">
+      <button id="btnFlip">Gira</button>
+      <button id="btnKo" hidden>✗ Non sapevo</button>
+      <button id="btnOk" hidden>✓ Sapevo</button>
+    </div>
+    <p class="note">Tastiera: <b>spazio</b> gira, <b>←</b> non sapevo, <b>→</b> sapevo. Le carte sbagliate tornano nel mazzo finché non le indovini.
+      <button id="btnRestart">Ricomincia</button></p>
+  </section>
+
+  <!-- ================= ALFABETO ================= -->
+  <section id="pageAbc" hidden>
+    <div class="opts">
+      <div class="row"><span>Esercizio</span>
+        <button class="chip on" data-amode="c2s">Nominativo → spelling</button>
+        <button class="chip" data-amode="s2c">Spelling → nominativo</button>
+      </div>
+      <div class="row"><span>Cifre</span>
+        <button class="chip on" data-digits="it">in italiano</button>
+        <button class="chip" data-digits="en">in inglese (ICAO)</button>
+      </div>
+    </div>
+    <div id="acard" class="fcard" tabindex="0"></div>
+    <div class="two">
+      <button id="aFlip">Gira</button>
+      <button id="aNew">Nuovo nominativo</button>
+    </div>
+    <p class="note">Tastiera: <b>spazio</b> gira, <b>invio</b> nuovo nominativo. Il primo è sempre il tuo.
+      Si dice a voce alta, poi si gira la carta per controllare.</p>
+
+    <h2>Alfabeto fonetico internazionale (ITU/ICAO/NATO)</h2>
+    <table id="abc"><thead><tr><th></th><th>Parola</th><th>Pronuncia</th><th>Italiano (telefonico)</th></tr></thead><tbody></tbody></table>
+    <p class="note">In radio si usa <b>sempre</b> l'alfabeto internazionale, anche tra italiani: è quello che l'altra stazione si aspetta e che si capisce meglio nel rumore.
+      L'alfabeto «delle città» italiano (Ancona, Bologna…) è di uso telefonico, lo si sente ogni tanto sui ponti ma non è lo standard.
+      Le cifre in QSO italiani si dicono in italiano; in inglese l'ICAO prescrive <i>tree</i> (3), <i>fife</i> (5), <i>niner</i> (9).
+      In CW invece non serve: si trasmettono le lettere.</p>
+  </section>
+</div>
+
+<script>
+/* [codice, domanda, risposta, uso ham (opz.), gruppo]
+   gruppo: "top" = più usati dai radioamatori, "std" = altri ITU, "aero" = aeronautici, "slang" = gergo ham non ITU */
+const Q = [
+  ["QRA","Qual è il nome della tua stazione?","Il nome della mia stazione è …","il nominativo; storicamente anche «QRA locator», il vecchio sistema di locatore","top"],
+  ["QRB","A che distanza (circa) sei dalla mia stazione?","La distanza tra le nostre stazioni è di circa … km.","","top"],
+  ["QRD","Dove sei diretto e da dove vieni?","Sono diretto a … e provengo da …","","std"],
+  ["QRE","A che ora prevedi di arrivare?","Prevedo di arrivare alle … (UTC).","","std"],
+  ["QRF","Stai tornando a …?","Sto tornando a …","","std"],
+  ["QRG","Mi indichi la mia frequenza esatta (o quella di …)?","La tua frequenza esatta (o quella di …) è … kHz.","«frequenza»: «QRG 145,500»","top"],
+  ["QRH","La mia frequenza varia?","La tua frequenza varia.","","std"],
+  ["QRI","Com'è la tonalità della mia emissione?","La tonalità della tua emissione è: 1 buona, 2 variabile, 3 cattiva.","","std"],
+  ["QRK","Qual è la comprensibilità dei miei segnali?","La comprensibilità dei tuoi segnali è: 1 cattiva, 2 scarsa, 3 discreta, 4 buona, 5 ottima.","corrisponde alla R del rapporto RST","top"],
+  ["QRL","Sei occupato?","Sono occupato (con …). Per favore non disturbare.","«la frequenza è libera?» prima di fare CQ; in CW si trasmette «QRL?»","top"],
+  ["QRM","Sei disturbato (da altre stazioni)?","Sono disturbato: 1 per niente, 2 poco, 3 moderatamente, 4 molto, 5 moltissimo.","interferenza causata da altre stazioni o dall'uomo","top"],
+  ["QRN","Sei disturbato da disturbi atmosferici?","Sono disturbato da disturbi atmosferici: 1 per niente … 5 moltissimo.","rumore statico, temporali, scariche","top"],
+  ["QRO","Devo aumentare la potenza?","Aumenta la potenza.","«alta potenza»: «stazione QRO»","top"],
+  ["QRP","Devo diminuire la potenza?","Diminuisci la potenza.","«bassa potenza»: di solito ≤ 5 W in CW, ≤ 10 W in SSB; tipico di SOTA/POTA","top"],
+  ["QRQ","Devo trasmettere più velocemente?","Trasmetti più velocemente (… parole al minuto).","CW veloce","top"],
+  ["QRS","Devo trasmettere più lentamente?","Trasmetti più lentamente (… parole al minuto).","CW lento, per principianti: «QRS PSE»","top"],
+  ["QRT","Devo smettere di trasmettere?","Smetti di trasmettere.","«chiudo la stazione»: «vado QRT»","top"],
+  ["QRU","Hai qualcosa per me?","Non ho niente per te.","","top"],
+  ["QRV","Sei pronto?","Sono pronto.","«sono attivo / disponibile»: «QRV su 20 m»","top"],
+  ["QRW","Devo avvisare … che lo stai chiamando su … kHz?","Per favore avvisa … che lo sto chiamando su … kHz.","","std"],
+  ["QRX","Quando mi richiamerai?","Ti richiamerò alle … (UTC) su … kHz.","«attendi un attimo», «stand-by»","top"],
+  ["QRY","Qual è il mio turno?","Il tuo turno è il numero …","ordine nella ruota sui ponti","top"],
+  ["QRZ","Chi mi sta chiamando?","Ti sta chiamando … (su … kHz).","«QRZ?» = chi mi chiama? / c'è qualcuno? Anche il sito qrz.com","top"],
+  ["QSA","Qual è la forza dei miei segnali?","La forza dei tuoi segnali è: 1 appena percettibile, 2 debole, 3 discreta, 4 buona, 5 ottima.","","top"],
+  ["QSB","La forza dei miei segnali varia?","La forza dei tuoi segnali varia.","«evanescenza», fading","top"],
+  ["QSD","La mia manipolazione è difettosa?","La tua manipolazione è difettosa.","CW mal battuto","std"],
+  ["QSG","Devo trasmettere … messaggi alla volta?","Trasmetti … messaggi alla volta.","","std"],
+  ["QSK","Riesci a sentirmi tra i miei segnali? Se sì, posso interromperti durante la trasmissione?","Riesco a sentirti tra i miei segnali: interrompi pure.","full break-in in CW: la radio riceve tra un punto e l'altro","top"],
+  ["QSL","Puoi darmi conferma di ricezione?","Ti confermo la ricezione.","«ricevuto»; e la cartolina (o conferma elettronica) che attesta il collegamento","top"],
+  ["QSM","Devo ripetere l'ultimo messaggio che ti ho trasmesso?","Ripeti l'ultimo messaggio.","","std"],
+  ["QSN","Mi hai sentito (o hai sentito …) su … kHz?","Ti ho sentito (o ho sentito …) su … kHz.","","std"],
+  ["QSO","Puoi comunicare con … direttamente (o tramite ritrasmissione)?","Posso comunicare con … direttamente (o tramite …).","«collegamento»: un contatto bilaterale completo","top"],
+  ["QSP","Vuoi ritrasmettere a … ?","Ritrasmetterò a …","passare un messaggio a una terza stazione","top"],
+  ["QSR","Devo ripetere la chiamata sulla frequenza di chiamata?","Ripeti la chiamata sulla frequenza di chiamata: non ti ho sentito (o c'era interferenza).","","std"],
+  ["QSS","Quale frequenza di lavoro userai?","Userò la frequenza di lavoro … kHz.","","std"],
+  ["QSU","Devo trasmettere o rispondere su questa frequenza (o su … kHz)?","Trasmetti o rispondi su questa frequenza (o su … kHz).","","std"],
+  ["QSV","Devo trasmettere una serie di V su questa frequenza?","Trasmetti una serie di V su questa frequenza.","prova / taratura","std"],
+  ["QSW","Vuoi trasmettere su questa frequenza (o su … kHz)?","Trasmetterò su questa frequenza (o su … kHz).","","std"],
+  ["QSX","Vuoi ascoltare … su … kHz?","Ascolto … su … kHz.","lavoro in split: «QSX 5 up» = ascolto 5 kHz più su","top"],
+  ["QSY","Devo passare a trasmettere su un'altra frequenza?","Passa a trasmettere su un'altra frequenza (o su … kHz).","«cambio frequenza»: «facciamo QSY su 145,550»","top"],
+  ["QSZ","Devo trasmettere ogni parola o gruppo più di una volta?","Trasmetti ogni parola o gruppo due (o … ) volte.","","std"],
+  ["QTA","Devo annullare il messaggio numero …?","Annulla il messaggio numero …","","std"],
+  ["QTB","Sei d'accordo con il mio conteggio delle parole?","Non sono d'accordo con il tuo conteggio: ripeterò la prima lettera di ogni parola.","","std"],
+  ["QTC","Quanti messaggi hai da trasmettere?","Ho … messaggi per te (o per …).","nei contest WAE: messaggi con i dati di QSO precedenti","std"],
+  ["QTH","Qual è la tua posizione in latitudine e longitudine (o secondo altra indicazione)?","La mia posizione è … latitudine … longitudine (o secondo altra indicazione).","«la mia località»: «il mio QTH è Varese»","top"],
+  ["QTR","Qual è l'ora esatta?","L'ora esatta è … (UTC).","","top"],
+  ["QTS","Vuoi trasmettere il tuo nominativo per la taratura / per misurare la frequenza?","Trasmetterò il mio nominativo per la taratura.","","std"],
+  ["QTU","In quali orari è aperta la tua stazione?","La mia stazione è aperta dalle … alle … (UTC).","","std"],
+  ["QTX","Terrai la stazione aperta per altre comunicazioni con me fino a nuovo avviso (o fino alle …)?","Terrò la stazione aperta per altre comunicazioni con te fino a nuovo avviso (o fino alle …).","","std"],
+  ["QUA","Hai notizie di … (nominativo)?","Ecco le notizie di … (nominativo).","","std"],
+  ["QUM","Posso riprendere il lavoro normale?","Il lavoro normale può riprendere.","fine di un traffico di emergenza","std"],
+  ["QNH","Qual è la pressione da impostare sull'altimetro per leggere l'altitudine (riferita al livello del mare) all'atterraggio?","Imposta … hPa per leggere l'altitudine all'atterraggio.","","aero"],
+  ["QFE","Qual è la pressione atmosferica all'altezza della pista?","La pressione all'altezza della pista è … hPa.","l'altimetro segna 0 sulla pista","aero"],
+  ["QNE","Cosa indicherà l'altimetro all'atterraggio impostato su 1013,2 hPa?","Con 1013,2 hPa impostati, all'atterraggio l'altimetro indicherà … (livello di volo).","","aero"],
+  ["QDM","Qual è la rotta magnetica da seguire (vento nullo) per raggiungermi?","La rotta magnetica da seguire per raggiungermi è … gradi.","","aero"],
+  ["QDR","Qual è il mio rilevamento magnetico rispetto a te?","Il tuo rilevamento magnetico rispetto a me è … gradi.","","aero"],
+  ["QTE","Qual è il mio rilevamento vero rispetto a te?","Il tuo rilevamento vero rispetto a me è … gradi.","","aero"],
+  ["QUJ","Qual è la rotta vera da seguire per raggiungermi?","La rotta vera da seguire per raggiungermi è … gradi.","","aero"],
+  ["QRPp","—","Potenza molto bassa, meno di 1 W.","","slang"],
+  ["QLF","Stai trasmettendo col piede sinistro?","Trasmetti col piede sinistro (CW pessimo).","scherzoso: manipolazione CW orribile","slang"],
+  ["QSL via","—","La cartolina QSL va inviata tramite … (manager, bureau o diretta).","","slang"],
+  ["QTHR","—","Il mio indirizzo è quello corretto nel callbook / su QRZ.com.","uso britannico","slang"],
+  ["CQ","—","Chiamata generale: cerco un collegamento con chiunque.","«CQ CQ CQ de IZ2XYZ»; «CQ SOTA», «CQ POTA», «CQ DX» restringono a chi cerchi","cw"],
+  ["DE","—","Da, qui parla (separa il nominativo chiamato dal proprio).","«IK2ABC de IZ2XYZ»","cw"],
+  ["K","—","Passo: invito a trasmettere (chiunque, dopo un CQ).","","cw"],
+  ["KN","—","Passo solo alla stazione con cui sono in contatto, gli altri non intervengano.","","cw"],
+  ["BK","—","Break: passo al volo, per uno scambio rapido.","","cw"],
+  ["AR","—","Fine del messaggio (in CW si batte come unico segno, «.-.-.»).","","cw"],
+  ["SK","—","Fine del collegamento (in CW unico segno «...-.-»).","«73 SK» chiude il QSO","cw"],
+  ["BT","—","Separatore tra parti del messaggio (in CW «-...-», scritto anche «=»).","","cw"],
+  ["R","—","Ricevuto, tutto chiaro.","","cw"],
+  ["?","—","Ripeti / domanda (dopo un codice lo trasforma in domanda: QTH?).","","cw"],
+  ["RST","—","Rapporto di ricezione: R leggibilità (1–5), S forza (1–9), T tono (1–9, solo CW).","«59» in fonia, «599» in CW","cw"],
+  ["5NN","—","599 abbreviato (N = 9 in CW): il rapporto standard nei contest e nelle attivazioni.","","cw"],
+  ["73","—","Cordiali saluti.","si dice «73», mai «73s» o «tanti 73»","cw"],
+  ["88","—","Baci e abbracci (a una YL o in famiglia).","","cw"],
+  ["TNX","—","Grazie (thanks). Anche TKS.","","cw"],
+  ["TU","—","Grazie (thank you); nei contest chiude il QSO.","","cw"],
+  ["FB","—","Ottimo, benissimo (fine business).","","cw"],
+  ["OM","—","Radioamatore; «vecchio mio» (old man, a prescindere dall'età).","","cw"],
+  ["YL","—","Operatrice, radioamatrice (young lady).","","cw"],
+  ["XYL","—","Moglie (ex young lady).","","cw"],
+  ["OP","—","Operatore: «OP Marco».","","cw"],
+  ["UR","—","Tuo, il tuo (your) / sei (you are).","«UR RST 579»","cw"],
+  ["HR","—","Qui (here).","«HR QTH VARESE»","cw"],
+  ["HW","—","Come (how): «HW?» = come mi ricevi?","","cw"],
+  ["PSE","—","Per favore (please).","","cw"],
+  ["AGN","—","Di nuovo, ancora (again).","«PSE AGN» = ripeti per favore","cw"],
+  ["ES","—","E (and).","","cw"],
+  ["FER","—","Per (for).","","cw"],
+  ["ABT","—","Circa (about).","","cw"],
+  ["VY","—","Molto (very).","«VY 73»","cw"],
+  ["GM","—","Buongiorno (good morning). GA buon pomeriggio, GE buonasera, GN buonanotte.","","cw"],
+  ["GL","—","Buona fortuna (good luck).","","cw"],
+  ["CUL","—","Ci sentiamo (see you later).","","cw"],
+  ["CFM","—","Confermo.","","cw"],
+  ["SRI","—","Scusa (sorry).","","cw"],
+  ["NR","—","Numero; nei contest il numero progressivo.","","cw"],
+  ["NAME","—","Nome. Anche NM.","«NAME MARCO»","cw"],
+  ["RIG","—","Apparato, la radio.","«RIG IC-737»","cw"],
+  ["ANT","—","Antenna.","","cw"],
+  ["PWR","—","Potenza (power).","","cw"],
+  ["WX","—","Meteo, tempo atmosferico.","","cw"],
+  ["WKD","—","Collegato (worked).","","cw"],
+  ["HI","—","Risata (in CW «HI HI»).","","cw"],
+  ["DX","—","Collegamento a lunga distanza, o la stazione lontana.","","cw"],
+  ["UP","—","Ascolto più su in frequenza (lavoro in split): «UP 5» = 5 kHz sopra.","","cw"],
+  ["TEST","—","Contest in corso: «CQ TEST».","","cw"],
+  ["S2S","—","Summit-to-summit: QSO tra due stazioni entrambe in attivazione SOTA.","","cw"],
+  ["P2P","—","Park-to-park: QSO tra due stazioni entrambe in attivazione POTA.","","cw"],
+  ["REF","—","Riferimento della cima o del parco attivato (es. I/LO-xxx, IT-xxxx).","","cw"],
+];
+const TAG = {top:"frequente", std:"ITU", aero:"aero", slang:"gergo", cw:"abbrev."};
+
+const $ = s => document.querySelector(s);
+const esc = s => s.replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const norm = s => s.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase();
+
+/* evidenzia i termini cercati ignorando accenti e maiuscole: map collega ogni carattere normalizzato al suo indice nel testo originale */
+function hl(text, terms){
+  if(!terms.length) return esc(text);
+  let map=[], flat="";
+  for(let i=0;i<text.length;i++){ const n=norm(text[i]); for(const c of n){ flat+=c; map.push(i); } }
+  const marks=new Array(text.length).fill(false);
+  for(const t of terms){ let p=0; while((p=flat.indexOf(t,p))!==-1){ for(let k=p;k<p+t.length;k++) marks[map[k]]=true; p+=t.length; } }
+  let out="", open=false;
+  for(let i=0;i<text.length;i++){
+    if(marks[i]&&!open){out+="<mark>";open=true} else if(!marks[i]&&open){out+="</mark>";open=false}
+    out+=esc(text[i]);
+  }
+  return out+(open?"</mark>":"");
+}
+
+/* ---------- elenco ---------- */
+let listSet = "all";
+function renderList(){
+  const terms = norm($("#q").value).split(/\s+/).filter(Boolean);
+  const rows = Q.filter(([c,d,r,h,g]) => {
+    if(listSet!=="all" && g!==listSet) return false;
+    const hay = norm([c,d,r,h].join(" "));
+    return terms.every(t => hay.includes(t));
+  });
+  $("#count").textContent = rows.length + " / " + Q.length;
+  $("#list").innerHTML = rows.length ? rows.map(([c,d,r,h,g]) => `
+    <li>
+      <div class="code mono">${hl(c,terms)}<small>${TAG[g]}</small></div>
+      ${d!=="—" ? `<div class="qd"><b>D</b>${hl(d,terms)}</div>` : ""}
+      <div class="qr"><b>${d!=="—"?"R":""}</b>${hl(r,terms)}</div>
+      ${h ? `<div class="ham">${hl(h,terms)}</div>` : ""}
+    </li>`).join("") : `<li class="empty" style="display:block">Nessun codice trovato</li>`;
+}
+$("#q").addEventListener("input", renderList);
+$("#listChips").addEventListener("click", e => {
+  const b = e.target.closest("[data-set]"); if(!b) return;
+  listSet = b.dataset.set;
+  document.querySelectorAll("#listChips .chip").forEach(x => x.classList.toggle("on", x===b));
+  renderList();
+});
+
+/* ---------- flashcard ---------- */
+let dir = "c2d", deckSet = "top", queue = [], total = 0, ok = 0, ko = 0, cur = null, flipped = false;
+try { const s = JSON.parse(localStorage.getItem("codiciq.opts")||"{}"); if(s.dir) dir=s.dir; if(s.deck) deckSet=s.deck; } catch(e){}
+
+function shuffle(a){ for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function deck(){
+  const pick = Q.filter(x => deckSet==="all" ? true : deckSet==="std" ? (x[4]==="top"||x[4]==="std") : x[4]===deckSet);
+  return pick.map(x => ({q:x, d: dir==="mix" ? (Math.random()<.5?"c2d":"d2c") : dir}));
+}
+function restart(){
+  try { localStorage.setItem("codiciq.opts", JSON.stringify({dir, deck:deckSet})); } catch(e){}
+  document.querySelectorAll("[data-dir]").forEach(b => b.classList.toggle("on", b.dataset.dir===dir));
+  document.querySelectorAll("[data-deck]").forEach(b => b.classList.toggle("on", b.dataset.deck===deckSet));
+  queue = shuffle(deck()); total = queue.length; ok = ko = 0;
+  next();
+}
+function defHtml(q){
+  const [c,d,r,h] = q;
+  return (d!=="—" ? `<div class="qd"><b>D</b> ${esc(d)}</div>` : "") +
+         `<div class="qr"><b>${d!=="—"?"R":""}</b> ${esc(r)}</div>` +
+         (h ? `<div class="ham">${esc(h)}</div>` : "");
+}
+function next(){
+  cur = queue.shift(); flipped = false;
+  $("#pNum").textContent = `${ok} di ${total} imparate`;
+  $("#pFill").style.width = (ok / total * 100) + "%";
+  $("#pOk").textContent = ok; $("#pKo").textContent = ko;
+  draw();
+}
+function draw(){
+  const card = $("#card");
+  card.classList.toggle("done", !cur);
+  $("#btnFlip").hidden = !cur || flipped;
+  $("#btnOk").hidden = $("#btnKo").hidden = !cur || !flipped;
+  if(!cur){
+    card.innerHTML = `<div class="side">Mazzo finito</div><div class="big">73!</div>
+      <div class="txt">${total} carte, ${ko} errori lungo la strada.</div><div class="tap">Premi «Ricomincia» per un altro giro</div>`;
+    return;
+  }
+  const {q, d} = cur;
+  const code = `<div class="big mono">${esc(q[0])}</div>`;
+  const def = `<div class="txt">${defHtml(q)}</div>`;
+  if(d === "c2d"){
+    card.innerHTML = `<div class="side">Cosa significa?</div>${code}` + (flipped ? `<hr>${def}` : `<div class="tap">tocca per girare</div>`);
+  } else {
+    card.innerHTML = `<div class="side">Qual è il codice?</div>${def}` + (flipped ? `<hr>${code}` : `<div class="tap">tocca per girare</div>`);
+  }
+}
+function flip(){ if(cur && !flipped){ flipped = true; draw(); } }
+function answer(right){
+  if(!cur || !flipped) return;
+  if(right) ok++;
+  else { ko++; queue.splice(Math.min(queue.length, 3 + Math.floor(Math.random()*3)), 0, cur); } // ritorna tra qualche carta
+  next();
+}
+$("#card").addEventListener("click", flip);
+$("#btnFlip").addEventListener("click", flip);
+$("#btnOk").addEventListener("click", () => answer(true));
+$("#btnKo").addEventListener("click", () => answer(false));
+$("#btnRestart").addEventListener("click", restart);
+document.querySelectorAll("[data-dir]").forEach(b => b.addEventListener("click", () => { dir = b.dataset.dir; restart(); }));
+document.querySelectorAll("[data-deck]").forEach(b => b.addEventListener("click", () => { deckSet = b.dataset.deck; restart(); }));
+document.addEventListener("keydown", e => {
+  if($("#pageCards").hidden || e.target.tagName==="INPUT") return;
+  if(e.key===" "){ e.preventDefault(); flip(); }
+  else if(e.key==="ArrowRight") answer(true);
+  else if(e.key==="ArrowLeft") answer(false);
+});
+
+/* ---------- alfabeto fonetico ---------- */
+const ABC = [
+  ["A","Alfa","AL-fa","Ancona"],["B","Bravo","BRA-vo","Bologna"],["C","Charlie","CIAR-li","Como"],
+  ["D","Delta","DEL-ta","Domodossola"],["E","Echo","EC-co","Empoli"],["F","Foxtrot","FOX-trot","Firenze"],
+  ["G","Golf","GOLF","Genova"],["H","Hotel","o-TEL","Hotel"],["I","India","IN-dia","Imola"],
+  ["J","Juliett","GIU-li-et","Jolly"],["K","Kilo","KI-lo","Kappa"],["L","Lima","LI-ma","Livorno"],
+  ["M","Mike","MAIK","Milano"],["N","November","no-VEM-ber","Napoli"],["O","Oscar","OS-car","Otranto"],
+  ["P","Papa","pa-PA","Padova / Palermo"],["Q","Quebec","che-BEC","Quarto"],["R","Romeo","RO-meo","Roma"],
+  ["S","Sierra","si-ER-ra","Savona"],["T","Tango","TAN-go","Torino"],["U","Uniform","IU-ni-form","Udine"],
+  ["V","Victor","VIC-tor","Venezia"],["W","Whiskey","UIS-chi","Washington"],["X","X-ray","ECS-rei","Xeres"],
+  ["Y","Yankee","IEN-chi","York / Yacht"],["Z","Zulu","ZU-lu","Zara"],
+];
+const DIG = {
+  it:["Zero","Uno","Due","Tre","Quattro","Cinque","Sei","Sette","Otto","Nove"],
+  en:["Zero","One","Two","Tree","Four","Fife","Six","Seven","Eight","Niner"],
+};
+const WORD = Object.fromEntries(ABC.map(([l,w]) => [l,w]));
+$("#abc tbody").innerHTML = ABC.map(([l,w,p,i]) => `<tr><td class="mono">${l}</td><td>${w}</td><td class="pr">${p}</td><td class="it">${i}</td></tr>`).join("");
+
+/* prefissi: italiani più probabili sui ponti, più qualche estero frequente in HF */
+const PFX = ["I","IK","IZ","IU","IW","IN3","IS0","IT9","IK","IZ","IU","DL","F","G","EA","OE","HB9","ON","PA","SP","OK","9A","S5","K","W","JA","VK"];
+const L = "ABCDEFGHIJKLMNOPQRSTUVWXYZ", rnd = a => a[Math.floor(Math.random()*a.length)];
+function randCall(){
+  const p = rnd(PFX);
+  const n = /\d$/.test(p) ? "" : String(Math.floor(Math.random()*10));
+  let s = ""; for(let i=0, k=Math.random()<.7?3:2; i<k; i++) s += rnd(L);
+  return p + n + s;
+}
+let amode = "c2s", digits = "it", aCall = randCall(), aFlipped = false;
+try { const s = JSON.parse(localStorage.getItem("codiciq.abc")||"{}"); if(s.amode) amode=s.amode; if(s.digits) digits=s.digits; } catch(e){}
+const spell = c => [...c].map(ch => /\d/.test(ch) ? DIG[digits][+ch] : WORD[ch]).map(w => `<span>${w}</span>`).join(" · ");
+function drawAbc(){
+  document.querySelectorAll("[data-amode]").forEach(b => b.classList.toggle("on", b.dataset.amode===amode));
+  document.querySelectorAll("[data-digits]").forEach(b => b.classList.toggle("on", b.dataset.digits===digits));
+  try { localStorage.setItem("codiciq.abc", JSON.stringify({amode, digits})); } catch(e){}
+  const call = `<div class="big mono">${aCall}</div>`, sp = `<div class="spell">${spell(aCall)}</div>`;
+  const tap = `<div class="tap">tocca per girare</div>`;
+  $("#acard").innerHTML = amode==="c2s"
+    ? `<div class="side">Come lo sillabi?</div>${call}${aFlipped ? "<hr>"+sp : tap}`
+    : `<div class="side">Che nominativo è?</div>${sp}${aFlipped ? "<hr>"+call : tap}`;
+  $("#aFlip").hidden = aFlipped;
+}
+function aFlip(){ if(!aFlipped){ aFlipped = true; drawAbc(); } }
+function aNew(){ aCall = randCall(); aFlipped = false; drawAbc(); }
+$("#acard").addEventListener("click", aFlip);
+$("#aFlip").addEventListener("click", aFlip);
+$("#aNew").addEventListener("click", aNew);
+document.querySelectorAll("[data-amode]").forEach(b => b.addEventListener("click", () => { amode = b.dataset.amode; aFlipped = false; drawAbc(); }));
+document.querySelectorAll("[data-digits]").forEach(b => b.addEventListener("click", () => { digits = b.dataset.digits; drawAbc(); }));
+document.addEventListener("keydown", e => {
+  if($("#pageAbc").hidden || e.target.tagName==="INPUT") return;
+  if(e.key===" "){ e.preventDefault(); aFlip(); }
+  else if(e.key==="Enter"){ e.preventDefault(); aNew(); }
+});
+drawAbc();
+
+/* ---------- pagine (hash) ---------- */
+function route(){
+  const page = location.hash === "#flashcard" ? "Cards" : location.hash === "#alfabeto" ? "Abc" : "List";
+  for(const p of ["List","Cards","Abc"]){
+    $("#page"+p).hidden = p !== page;
+    $("#nav"+p).classList.toggle("on", p === page);
+  }
+  if(page==="Cards" && !total) restart();
+}
+addEventListener("hashchange", route);
+renderList();
+route();
+</script>
+<script src="../pwa.js"></script>
+</body>
+</html>

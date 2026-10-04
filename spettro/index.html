@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Radio Spectrum Explorer</title>
+  <meta name="theme-color" content="#0a0e14">
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="manifest" href="../manifest.webmanifest">
+  <link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header id="topbar">
+    <div class="brand">
+      <a class="home" href="../" title="Tutti gli strumenti di Ham Toolkit" aria-label="Torna a Ham Toolkit">←</a>
+      <span class="logo">📡</span>
+      <h1>Radio Spectrum Explorer</h1>
+    </div>
+    <div class="controls">
+      <div class="search">
+        <svg class="search-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <circle cx="10.5" cy="10.5" r="7"></circle><line x1="20" y1="20" x2="15.5" y2="15.5"></line>
+        </svg>
+        <input id="searchInput" type="text" placeholder="Cerca banda…" autocomplete="off" spellcheck="false" />
+        <div id="searchResults" class="results hidden"></div>
+      </div>
+      <input id="freqInput" class="num" type="text" placeholder="Frequenza · es. 7 MHz" title="Inserisci una frequenza e premi Invio per centrare la vista" autocomplete="off" spellcheck="false" />
+      <input id="waveInput" class="num" type="text" placeholder="λ · es. 40 m" title="Inserisci una lunghezza d'onda e premi Invio per centrare la vista" autocomplete="off" spellcheck="false" />
+    </div>
+    <div class="hint">
+      <div class="commands">
+        <button class="cmd-btn" type="button">⌨ Comandi ▾</button>
+        <div class="cmd-menu">
+          <div class="cmd"><kbd>rotella</kbd><span>scorri verticale</span></div>
+          <div class="cmd"><kbd>Ctrl + rotella</kbd><span>zoom (sul cursore)</span></div>
+          <div class="cmd"><kbd>Shift + rotella</kbd><span>scorri frequenze</span></div>
+          <div class="cmd"><kbd>scroll ↔</kbd><span>scorri frequenze</span></div>
+          <div class="cmd"><kbd>trascina</kbd><span>sposta frequenze ↔ e corsie ↕</span></div>
+          <div class="cmd"><kbd>pizzica (touch)</kbd><span>zoom</span></div>
+          <div class="cmd"><kbd>click / tocco</kbd><span>dettagli e fonte</span></div>
+          <div class="cmd"><kbd>● pallino</kbd><span>frequenza singola</span></div>
+        </div>
+      </div>
+      <div class="filters">
+        <button id="filterBtn" class="cmd-btn" type="button" aria-expanded="false" aria-controls="filterMenu">Filtri <span id="filterCount" class="badge hidden"></span></button>
+        <div id="filterMenu" class="filter-menu hidden">
+          <div class="fm-title">Enti</div>
+          <div id="fScopes" class="fm-grid"></div>
+          <div class="fm-title">Categorie
+            <span class="fm-acts"><button type="button" data-all="1">tutte</button><button type="button" data-all="0">nessuna</button></span>
+          </div>
+          <div id="fCats" class="fm-grid"></div>
+          <div class="fm-title">Altro</div>
+          <label class="fm-item"><input type="checkbox" id="fMarkers"><span>Frequenze singole (●)</span></label>
+        </div>
+      </div>
+      <button id="resetBtn" title="Torna alla vista completa">⤢ Reset</button>
+    </div>
+  </header>
+
+  <main id="stage">
+    <canvas id="spectrum"></canvas>
+
+    <aside id="panel" class="panel hidden">
+      <button id="panelClose" class="panel-close" aria-label="Chiudi">×</button>
+      <div id="panelBody"></div>
+    </aside>
+
+    <div id="loadError" class="load-error hidden">
+      <h2>Impossibile caricare <code>bands.json</code></h2>
+      <p>Apri il sito tramite un server locale (i browser bloccano <code>fetch</code> dei file via <code>file://</code>).</p>
+      <pre>cd "questa cartella"
+python -m http.server 8000
+# poi apri http://localhost:8000</pre>
+    </div>
+  </main>
+
+  <script src="app.js"></script>
+  <script src="../pwa.js"></script>
+</body>
+</html>
